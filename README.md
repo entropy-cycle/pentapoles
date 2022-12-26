@@ -1,8 +1,19 @@
-# tri-polar representation
+# pentapolar representation
 
 ## summary
 
-tri-polar representation is a representation of the world as a tri-pole. the tri-pole is a combination of the absorber, the radiator, and the actor.  the absorber is the pole that absorbs energy from the environment.  the radiator is the pole that radiates energy to the environment.  the actor is the pole that decides what to do.
+Pentapolar representation is a representation of the world as a pentapole. A pentapole can by any of the following:
+
+1. an absorber
+2. absorbtion
+3. a listener
+4. listening
+5. an executor
+6. execution
+7. a mediator
+8. mediation
+9. a radiator
+10. radiaton
 
 
 The absorber is the monopole that absorbs energy from the environment.
@@ -12,6 +23,12 @@ The mediator is the monopole that mediates between the absorber and the radiator
 The radiator is the monopole that radiates energy to the environment.
 
 The absorber, the listener, the executor, the mediator, and the radiator are all monopoles.
+
+Absorption is the dipole that absorbs energy from the environment.
+Listening is the dipole that listens to the environment.
+Execution is the dipole that decides what to do.
+Mediation is the dipole that mediates between the absorber and the radiator.
+Radiation is the dipole that radiates energy to the environment.
 
 # dipoles
 
@@ -64,7 +81,7 @@ global radiator --> local absorber --> global radiator
                   global radiator
 ```
 
-# tripoles are environments
+# Tripoles are environments
 
 tripoles are environments composed of other environments. The specific values of any object in each environment is opaque to the other environments and only visible as the emergent properties of the environment. This allows for the creation of complex environments that are composed of other environments.
 
