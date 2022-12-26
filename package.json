@@ -1,0 +1,33 @@
+{
+  "name": "entropy-code",
+  "version": "0.0.1",
+  "description": "entropy code sim",
+  "directories": {
+    "test": "test"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "clean": "rimraf ./lib",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:types": "tsc",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "npm-publish": "npm run build && npm publish"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.12",
+    "@open-wc/testing": "^3.1.6",
+    "@web/test-runner": "^0.14.0",
+    "@web/test-runner-mocha": "^0.7.5",
+    "es-dev-server": "^2.1.0",
+    "eslint": "^8.25.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.8.4",
+    "typescript-eslint": "0.0.1-alpha.0"
+  },
+  "author": "Sebastian Schepis",
+  "license": "ISC"
+}
