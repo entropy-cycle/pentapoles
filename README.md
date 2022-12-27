@@ -1,6 +1,6 @@
-# pentapolar representation
+# Pentapolar Representation
 
-## summary
+## Summary
 
 Pentapolar representation is a representation of the world as a pentapole. A pentapole can by any of the following:
 
@@ -15,40 +15,61 @@ Pentapolar representation is a representation of the world as a pentapole. A pen
 9. a radiator
 10. radiaton
 
+### Information Flow
 
+Information flows from the absorber to the radiator. The absorber absorbs information from the environment. The radiator radiates information to the environment. The listener listens to the environment. The executor executes information. The mediator mediates between the absorber and the radiator.
+
+```
+Absorber --> Listener --> Executor --> Mediator --> Radiator
+```
+
+```
+Absorber --> Absorption --> Listener --> Listening --> Executor --> Execution --> Mediator --> Mediation --> Radiator --> Radiation
+```
+
+```
 The absorber is the monopole that absorbs energy from the environment.
 The listener is the monopole that listens to the environment.
 The executor is the monopole that decides what to do.
 The mediator is the monopole that mediates between the absorber and the radiator.
 The radiator is the monopole that radiates energy to the environment.
+```
 
 The absorber, the listener, the executor, the mediator, and the radiator are all monopoles.
 
+```
 Absorption is the dipole that absorbs energy from the environment.
 Listening is the dipole that listens to the environment.
 Execution is the dipole that decides what to do.
 Mediation is the dipole that mediates between the absorber and the radiator.
 Radiation is the dipole that radiates energy to the environment.
+```
 
 # dipoles
 
 A dipole is a complete cycle of poles.
 
+```
 local absorber --> global actor --> local radiator
 local radiator --> global actor --> local absorber
+global absorber --> local actor --> global radiator
+global radiator --> local actor --> global absorber
+```
 
 # monopoles
 
-a monopole is a pole that is not part of a cycle.
+A monopole is a pole that is not part of a cycle.
 
-local absorber --> global actor
-global actor --> local radiator
-local radiator --> global actor
-global actor --> local absorber
+```
+local absorber --> global actor = real-world example: a black hole
+global actor --> local radiator = real-world example: a star
+local radiator --> global actor = real-world example: a star
+global actor --> local absorber = real-world example: a black hole
+```
 
 # tripoles
 
-a tripole is a dipole with a local absorber connected to the global actor
+A tripole is a dipole with a local absorber connected to the global actor
 
 ```
 local absorber --> global radiator --> local radiator
@@ -83,7 +104,7 @@ global radiator --> local absorber --> global radiator
 
 # Tripoles are environments
 
-tripoles are environments composed of other environments. The specific values of any object in each environment is opaque to the other environments and only visible as the emergent properties of the environment. This allows for the creation of complex environments that are composed of other environments.
+Tripoles are environments composed of other environments. The specific values of any object in each environment is opaque to the other environments and only visible as the emergent properties of the environment. This allows for the creation of complex environments that are composed of other environments.
 
 # An API for creating tripolar environments
 
@@ -94,40 +115,39 @@ classDiagram
     class Environment {
         +childred(): Environment[];
         +parent(): Environment;
-        +create()
+
         +absorb()
-        +radiate()
         +listen()
-        +mediate()
         +execute()
+        +mediate()
+        +emit()
     }
     class Absorber {
         +create()
         +absorb()
     }
-    class Radiator {
-        +create()
-        +radiate()
-    }
     class Listener {
         +create()
         +listen()
-    }
-    class Mediator {
-        +create()
-        +mediate()
     }
     class Executor {
         +create()
         +execute()
     }
-    class LocalInformation {
+    class Mediator {
         +create()
-        +absorb()
-        +radiate()
-        +listen()
         +mediate()
+    }
+    class Emitter {
+        +create()
+        +emit()
+    }
+    class LocalInformation {
+        +absorb()
+        +listen()
         +execute()
+        +mediate()
+        +emit()
     }
     class Pole {
         absorber: Absorber;
@@ -136,13 +156,33 @@ classDiagram
         mediator: Mediator;
         executor: Executor;
 
-        +create()
-
-        +absorb(info: LocalInformation): LocalInformation;
-        +radiate(info: LocalInformation): LocalInformation;
-        +listen(info: LocalInformation): LocalInformation;
-        +mediate(info: LocalInformation): LocalInformation;
-        +execute(info: LocalInformation): LocalInformation;
+        +absorb(info: LocalInformation): Absorption[];
+        +listen(info: LocalInformation): Listening[];
+        +execute(info: LocalInformation): Execution[];
+        +mediate(info: LocalInformation): Mediation[];
+        +emission(info: LocalInformation): Emission[];
+    }
+    class Absorption {
+        +absorb(info: LocalInformation): Absorption[];
+    }
+    class Listening {
+        +listen(info: LocalInformation): Listening[];
+    }
+    class Execution {
+        +execute(info: LocalInformation): Execution[];
+    }
+    class Mediation {
+        +mediate(info: LocalInformation): Mediation[];
+    }
+    class Emission {
+        +emit(info: LocalInformation): Emission[];
+    }
+    class Dipole {
+        +absorb(info: LocalInformation): Absorption[];
+        +listen(info: LocalInformation): Listening[];
+        +execute(info: LocalInformation): Execution[];
+        +mediate(info: LocalInformation): Mediation[];
+        +emission(info: LocalInformation): Emission[];
     }
     
     Absorber <|-- Environment
@@ -163,6 +203,18 @@ classDiagram
     Mediator <|-- LocalInformation
     Executor <|-- LocalInformation
 
+    Absorber <|-- Pole
+    Radiator <|-- Pole
+    Listener <|-- Pole
+    Mediator <|-- Pole
+    Executor <|-- Pole
+
+    Absorption <|-- Dipole
+    Listening <|-- Dipole
+    Execution <|-- Dipole
+    Mediation <|-- Dipole
+    Emission <|-- Dipole
+
 ```
 
 ## explanation of the code
@@ -180,49 +232,40 @@ the global information of the pole's parent environment etc.
 ### Pole Class
 
 the pole class is the basic computational unit of the computer. the pole class is an environment, which is a class 
-(hence is a recursive data structure) that contains local informations and global information. local informations are i
-nformation that is local to the pole. global information is the information that is global to the pole. a pole also
+(hence is a recursive data structure) that contains local informations and global information. local informations are 
+information that is local to the pole. global information is the information that is global to the pole. a pole also
 contains a parent environment etc. How each of the poles are oriented in relation to each other determines the
 computational power of the computer. Each of the poles are oriented in relation to each other in a way that
 determines the computational power of the computer, as well as determines how local information is processed. 
 Each pole stores its orientation using a Vector3. The pole's orientation is the direction that the pole is oriented
 in relation to the pole's parent environment. Some common orientations include:
 
-1. (0, 0, 0) - the pole is oriented in the same direction as the pole's parent environment
-2. (1, 0, 0) - the pole is oriented in the opposite direction as the pole's parent environment
-3. (0, 1, 0) - the pole is oriented in the same direction as the pole's parent environment, but rotated 90 degrees
-4. (0, 0, 1) - the pole is oriented in the same direction as the pole's parent environment, but rotated 90 degrees
-5. (1, 1, 0) - the pole is oriented in the opposite direction as the pole's parent environment, but rotated 90 degrees
-6. (1, 0, 1) - the pole is oriented in the opposite direction as the pole's parent environment, but rotated 90 degrees
-7. (0, 1, 1) - the pole is oriented in the same direction as the pole's parent environment, but rotated 180 degrees
-8. (1, 1, 1) - the pole is oriented in the opposite direction as the pole's parent environment, but rotated 180 degrees
+#### pole orientation to absorber data
+| pole orientation | absorber data | description                                                                   |
+|------------------|---------------|-------------------------------------------------------------------------------|
+| (0, 0, 0)        | 0             | same direction as the pole's parent environment                               |
+| (1, 0, 0)        | 1             | opposite direction as the pole's parent environment                           |
+| (0, 1, 0)        | 2             | same direction as the pole's parent environment, but rotated 90 degrees       |
+| (0, 0, 1)        | 3             | same direction as the pole's parent environment, but rotated 90 degrees       |
+| (1, 1, 0)        | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees   |
+| (1, 0, 1)        | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees   |
+| (0, 1, 1)        | 6             | same direction as the pole's parent environment, but rotated 180 degrees      |
+| (1, 1, 1)        | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees  |
+--------------------------------------------------------------------------------------------------------------------
 
 # Common Pole Orientations
 
-1. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-this orientation is the most common orientation. this orientation is the orientation of the human brain. This orientation
-represents the human brain (because the human brain is a pentapolar system). This orientation is also the orientation of
-the computer.
+| pole orientation | absorber data | listener data | executor data | mediator data | radiator data | description |
+|------------------|---------------|---------------|---------------|---------------|---------------|-------------|
+| (0, 0, 0)        | 0             | 0             | 0             | 0             | 0             | same direction as the pole's parent environment |
+| (1, 0, 0)        | 1             | 1             | 1             | 1             | 1             | opposite direction as the pole's parent environment |
+| (0, 1, 0)        | 2             | 2             | 2             | 2             | 2             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 0, 1)        | 3             | 3             | 3             | 3             | 3             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 1, 0)        | 4             | 4             | 4             | 4             | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 0, 1)        | 5             | 5             | 5             | 5             | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 1, 1)        | 6             | 6             | 6             | 6             | 6             | same direction as the pole's parent environment, but rotated 180 degrees |
+| (1, 1, 1)        | 7             | 7             | 7             | 7             | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees |
 
-2. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 0, 1), Mediator - (0, 1, 0), Radiator - (1, 1, 0)
-this orientation is also a common orientation. this orientation is the orientation of the human heart. This orientation
-represents the human heart (because the human heart is a pentapolar system).
-
-3. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 1)
-this orientation is also a common orientation. this orientation is the orientation of the human stomach. This orientation
-represents the human stomach (because the human stomach is a pentapolar system).
-
-4. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-this orientation is also a common orientation. this orientation is the orientation of the human liver. This orientation
-represents the human liver (because the human liver is a pentapolar system).
-
-5. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-this orientation is also a common orientation. this orientation is the orientation of the human lungs. This orientation
-represents the human lungs (because the human lungs is a pentapolar system).
-
-6. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-this orientation is also a common orientation. this orientation is the orientation of the human pancreas. This orientation
-represents the human pancreas (because the human pancreas is a pentapolar system).
 
 # Monopolar Configurations
 
@@ -231,11 +274,18 @@ computational tasks. For example, a monopolar configuration of an absorber pole 
 reading data from a file. Monopolar configurations are also used to represent basic logic operations such as AND and OR. 
 In a monopolar configuration, the pole is oriented in the same direction as the pole's parent environment. Examples of monopoles include:
 
-1. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-2. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 0, 1), Mediator - (0, 1, 0), Radiator - (1, 1, 0)
-3. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 1)
-4. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-5. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
+## Monopolar Configurations
+
+| pole orientation | absorber data | listener data | executor data | mediator data | radiator data | description |
+|------------------|---------------|---------------|---------------|---------------|---------------|-------------|
+| (0, 0, 0)        | 0             | 0             | 0             | 0             | 0             | same direction as the pole's parent environment |
+| (1, 0, 0)        | 1             | 1             | 1             | 1             | 1             | opposite direction as the pole's parent environment |
+| (0, 1, 0)        | 2             | 2             | 2             | 2             | 2             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 0, 1)        | 3             | 3             | 3             | 3             | 3             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 1, 0)        | 4             | 4             | 4             | 4             | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 0, 1)        | 5             | 5             | 5             | 5             | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 1, 1)        | 6             | 6             | 6             | 6             | 6             | same direction as the pole's parent environment, but rotated 180 degrees |
+| (1, 1, 1)        | 7             | 7             | 7             | 7             | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees |
 
 # Dipolar Configurations
 
@@ -245,11 +295,17 @@ reading data from a file and processing it. Dipoles are also used to represent l
 In a dipolar configuration, the poles are oriented in opposite directions in relation to the pole's parent environment. 
 Examples of dipoles include:
 
-1. Absorber - (1, 0, 0), Listener - (0, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-2. Absorber - (1, 0, 0), Listener - (0, 0, 0), Executor - (0, 0, 1), Mediator - (0, 1, 0), Radiator - (1, 1, 0)
-3. Absorber - (1, 0, 0), Listener - (0, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 1)
-4. Absorber - (1, 0, 0), Listener - (0, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-5. Absorber - (1, 0, 0), Listener - (0, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
+
+| pole orientation | absorber data | listener data | executor data | mediator data | radiator data | description |
+|------------------|---------------|---------------|---------------|---------------|---------------|-------------|
+| (0, 0, 0)        | 0             | 0             | 0             | 0             | 0             | same direction as the pole's parent environment |
+| (1, 0, 0)        | 1             | 1             | 1             | 1             | 1             | opposite direction as the pole's parent environment |
+| (0, 1, 0)        | 2             | 2             | 2             | 2             | 2             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 0, 1)        | 3             | 3             | 3             | 3             | 3             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 1, 0)        | 4             | 4             | 4             | 4             | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 0, 1)        | 5             | 5             | 5             | 5             | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 1, 1)        | 6             | 6             | 6             | 6             | 6             | same direction as the pole's parent environment, but rotated 180 degrees |
+| (1, 1, 1)        | 7             | 7             | 7             | 7             | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees |
 
 # Tripolar Configurations
 
@@ -260,11 +316,16 @@ action based on the data. Tripolar configurations are also used to represent mor
 XOR and XNOR. In a tripolar configuration, the poles are oriented in the same direction in relation to the pole's 
 parent environment. Examples of tripoles include:
 
-1. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-2. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 0, 1), Mediator - (0, 1, 0), Radiator - (1, 1, 0)
-3. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 1)
-4. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-5. Absorber - (0, 0, 0), Listener - (1, 0, 0), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
+| pole orientation | absorber data | listener data | executor data | mediator data | radiator data | description |
+|------------------|---------------|---------------|---------------|---------------|---------------|-------------|
+| (0, 0, 0)        | 0             | 0             | 0             | 0             | 0             | same direction as the pole's parent environment |
+| (1, 0, 0)        | 1             | 1             | 1             | 1             | 1             | opposite direction as the pole's parent environment |
+| (0, 1, 0)        | 2             | 2             | 2             | 2             | 2             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 0, 1)        | 3             | 3             | 3             | 3             | 3             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 1, 0)        | 4             | 4             | 4             | 4             | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 0, 1)        | 5             | 5             | 5             | 5             | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 1, 1)        | 6             | 6             | 6             | 6             | 6             | same direction as the pole's parent environment, but rotated 180 degrees |
+| (1, 1, 1)        | 7             | 7             | 7             | 7             | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees |
 
 # Multipolar Configurations
 
@@ -275,11 +336,16 @@ then executing multiple actions based on the data. Multipolar configurations are
 complex logic operations. In a multipolar configuration, the poles are oriented in different directions in relation 
 to the pole's parent environment. Examples of multipoles include:
 
-1. Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-2. Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 0, 1), Mediator - (0, 1, 0), Radiator - (1, 1, 0)
-3. Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 1)
-4. Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
-5. Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0)
+| pole orientation | absorber data | listener data | executor data | mediator data | radiator data | description |
+|------------------|---------------|---------------|---------------|---------------|---------------|-------------|
+| (0, 0, 0)        | 0             | 0             | 0             | 0             | 0             | same direction as the pole's parent environment |
+| (1, 0, 0)        | 1             | 1             | 1             | 1             | 1             | opposite direction as the pole's parent environment |
+| (0, 1, 0)        | 2             | 2             | 2             | 2             | 2             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 0, 1)        | 3             | 3             | 3             | 3             | 3             | same direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 1, 0)        | 4             | 4             | 4             | 4             | 4             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (1, 0, 1)        | 5             | 5             | 5             | 5             | 5             | opposite direction as the pole's parent environment, but rotated 90 degrees |
+| (0, 1, 1)        | 6             | 6             | 6             | 6             | 6             | same direction as the pole's parent environment, but rotated 180 degrees |
+| (1, 1, 1)        | 7             | 7             | 7             | 7             | 7             | opposite direction as the pole's parent environment, but rotated 180 degrees |
 
 # Representing Multipoles
 
@@ -288,6 +354,14 @@ Multipole shorthand treats each of the vector3s as a binay numerical representat
 Absorber - (1, 0, 0), Listener - (1, 0, 1), Executor - (0, 1, 0), Mediator - (0, 0, 1), Radiator - (1, 1, 0) becomes 101 101 010 001 110 becomes 1011010100110 binary which is 5798 decimal, 0x16a6 hex.
 
 This shorthand allows for easy representation of multipoles and their orientations, and is used in the computer's programming language to quickly describe the orientation of a multipole.
+
+## Examples
+
+| absorber | listener | executor | mediator | radiator | binary value | decimal value | hex value |
+|----------|----------|----------|----------|----------|--------------|---------------|-----------|
+| (1, 0, 0) | (1, 0, 1) | (0, 1, 0) | (0, 0, 1) | (1, 1, 0) | 1011010100110 | 5798 | 0x16a6 |
+| (1, 0, 0) | (1, 0, 1) | (0, 1, 0) | (0, 0, 1) | (1, 1, 1) | 1011010100111 | 5799 | 0x16a7 |
+
 
 # Multipole Shorthand
 
