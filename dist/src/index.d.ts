@@ -1,4 +1,5 @@
-import { Vector3 } from './vector';
+import { Vector2, Vector3 } from './vector';
+export { Vector2, Vector3 };
 export declare class Environment {
     parent: LocalInformation | null;
     localInformations: LocalInformation[];

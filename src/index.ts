@@ -1,5 +1,7 @@
 import { Vector2, Vector3 } from './vector';
 
+export { Vector2, Vector3 };
+
 export class Environment {
     _children: Environment[] = [];
     children(): Environment[] { return this._children; }
@@ -910,3 +912,4 @@ export class EnvironmentRenderer {
         context.fillRect(position.x + this.velocity.x, position.y + this.velocity.y, 5, 5);
     }
 }
+

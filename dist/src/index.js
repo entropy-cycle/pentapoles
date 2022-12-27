@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EnvironmentRenderer = exports.randomDipoles = exports.Dipole = exports.Pole = exports.Emission = exports.Emitter = exports.Mediation = exports.Mediative = exports.Execution = exports.Executive = exports.Listening = exports.Listener = exports.Absorption = exports.Absorber = exports.LocalInformation = exports.Environment = void 0;
+exports.EnvironmentRenderer = exports.randomDipoles = exports.Dipole = exports.Pole = exports.Emission = exports.Emitter = exports.Mediation = exports.Mediative = exports.Execution = exports.Executive = exports.Listening = exports.Listener = exports.Absorption = exports.Absorber = exports.LocalInformation = exports.Environment = exports.Vector3 = exports.Vector2 = void 0;
 const vector_1 = require("./vector");
+Object.defineProperty(exports, "Vector2", { enumerable: true, get: function () { return vector_1.Vector2; } });
+Object.defineProperty(exports, "Vector3", { enumerable: true, get: function () { return vector_1.Vector3; } });
 class Environment {
     children() { return this._children; }
     constructor(parent, localInformations = [], globalInformation) {
