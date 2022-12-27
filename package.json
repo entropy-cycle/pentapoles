@@ -1,11 +1,11 @@
 {
   "name": "@entropy-cycle/pentapoles",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Simulate reality",
   "directories": {
     "test": "test"
   },
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
     "prebuild": "npm run clean",

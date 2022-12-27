@@ -12,12 +12,16 @@ class Vector2 {
     divideScalar(s) { return new Vector2(this.x / s, this.y / s); }
     length() { return Math.sqrt(this.x * this.x + this.y * this.y); }
     distanceTo(v) { return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2)); }
+    distanceToX(v) { return Math.abs(this.x - v.x); }
+    distanceToY(v) { return Math.abs(this.y - v.y); }
     directionTo(v) { return v.sub(this).normal(); }
     angleTo(v) { return Math.acos(this.dot(v) / (this.length() * v.length())); }
     normalize() { return this.divideScalar(this.length()); }
     normal() { return this.clone().normalize(); }
     clone() { return new Vector2(this.x, this.y); }
     toString() { return `(${this.x},${this.y})`; }
+    static random(vecMin, vecMax) { return new Vector2(Math.random() * (vecMax.x - vecMin.x) + vecMin.x, Math.random() * (vecMax.y - vecMin.y) + vecMin.y); }
+    static r(num) { return Vector2.random(new Vector2(-num, -num), new Vector2(num, num)); }
 }
 exports.Vector2 = Vector2;
 class Vector3 {
@@ -31,6 +35,9 @@ class Vector3 {
     divideScalar(s) { return new Vector3(this.x / s, this.y / s, this.z / s); }
     length() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
     distanceTo(v) { return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2) + Math.pow(this.z - v.z, 2)); }
+    distanceToX(v) { return Math.abs(this.x - v.x); }
+    distanceToY(v) { return Math.abs(this.y - v.y); }
+    distanceToZ(v) { return Math.abs(this.z - v.z); }
     directionTo(v) { return v.sub(this).normal(); }
     angleTo(v) { return Math.acos(this.dot(v) / (this.length() * v.length())); }
     normalize() { return this.divideScalar(this.length()); }
@@ -44,5 +51,7 @@ class Vector3 {
         return new Vector2(x / z, y / z).multiplyScalar(scale).add(screen);
     }
     toString() { return `(${this.x},${this.y},${this.z})`; }
+    static random(vecMin, vecMax) { return new Vector3(Math.random() * (vecMax.x - vecMin.x) + vecMin.x, Math.random() * (vecMax.y - vecMin.y) + vecMin.y, Math.random() * (vecMax.z - vecMin.z) + vecMin.z); }
+    static r(num) { return Vector3.random(new Vector3(-num, -num, -num), new Vector3(num, num, num)); }
 }
 exports.Vector3 = Vector3;

@@ -11,12 +11,16 @@ export declare class Vector2 {
     divideScalar(s: number): Vector2;
     length(): number;
     distanceTo(v: Vector2): number;
+    distanceToX(v: Vector2): number;
+    distanceToY(v: Vector2): number;
     directionTo(v: Vector2): Vector2;
     angleTo(v: Vector2): number;
     normalize(): Vector2;
     normal(): Vector2;
     clone(): Vector2;
     toString(): string;
+    static random(vecMin: Vector2, vecMax: Vector2): Vector2;
+    static r(num: number): Vector2;
 }
 export declare class Vector3 {
     x: number;
@@ -32,6 +36,9 @@ export declare class Vector3 {
     divideScalar(s: number): Vector3;
     length(): number;
     distanceTo(v: Vector3): number;
+    distanceToX(v: Vector3): number;
+    distanceToY(v: Vector3): number;
+    distanceToZ(v: Vector3): number;
     directionTo(v: Vector3): Vector3;
     angleTo(v: Vector3): number;
     normalize(): Vector3;
@@ -39,4 +46,6 @@ export declare class Vector3 {
     clone(): Vector3;
     projectTo2d(camera: Vector3, screen: Vector2, rotation?: Vector3, scale?: number): Vector2;
     toString(): string;
+    static random(vecMin: Vector3, vecMax: Vector3): Vector3;
+    static r(num: number): Vector3;
 }
