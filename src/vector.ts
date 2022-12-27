@@ -15,7 +15,7 @@ export class Vector2 {
     normalize(): Vector2 { return this.divideScalar(this.length()); }
     normal(): Vector2 { return this.clone().normalize(); }
     clone(): Vector2 { return new Vector2(this.x, this.y); }
-    toString(): string { return `(${this.x}, ${this.y})`; }
+    toString(): string { return `(${this.x},${this.y})`; }
 }
 export class Vector3 {
     x: number; y: number; z: number;
@@ -41,5 +41,5 @@ export class Vector3 {
         let z = v.dot(new Vector3(0, 0, rotation.z));
         return new Vector2(x / z, y / z).multiplyScalar(scale).add(screen);
     }
-    toString(): string { return `(${this.x}, ${this.y}, ${this.z})`; }
+    toString(): string { return `(${this.x},${this.y},${this.z})`; }
 }
