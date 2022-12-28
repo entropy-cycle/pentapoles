@@ -1,0 +1,32 @@
+import { EnvironmentRoot } from './envbase';
+import { Pentuple } from './pentuple';
+export declare class Polarity {
+    stateSource: EnvironmentRoot | undefined;
+    _pentuple: Pentuple;
+    constructor(stateSource: EnvironmentRoot | undefined, initialPentuple?: number);
+    static compare(self: Polarity, other: Polarity): Polarity;
+    getAsHexagram(): number;
+    setAsHexagram(hexagram: number): void;
+    getAsPentuple(): number;
+    setAsPentuple(pentuple: number): void;
+    nextHexagram(): number;
+    nextPentuple(): number;
+    compare(other: Polarity): Polarity;
+    get absorb(): number;
+    set absorb(value: number);
+    get listen(): number;
+    set listen(value: number);
+    get execute(): number;
+    set execute(value: number);
+    get mediate(): number;
+    set mediate(value: number);
+    get emit(): number;
+    set emit(value: number);
+    set(absorb: number, listen: number, execute: number, mediate: number, emit: number): void;
+    get(): number[];
+    toString(): string;
+    clone(): Polarity;
+    state(): number;
+    add(other: Polarity): Polarity;
+    subtract(other: Polarity): Polarity;
+}

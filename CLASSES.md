@@ -1,77 +1,437 @@
-/*
 
+# classes
+
+- Environment
+- Information
+- LocalInformation
+- Polarity
+- Handler
+- Locality
+- Ray
+- Renderer
+
+## Environment functions:
+- addLocality(info: Environment, position: Vector3, radius: Vector3)
+- addLocaleInformation(info: LocaleInformation, position: Vector3, radius: Vector3)
+- updateLocaleInformation(info: LocaleInformation)
+- removeLocaleInformation(info: LocaleInformation)
+- update()
+- clearQueue()
+- on(event: string, eventHandler: Handler)
+- off(event: string, eventHandler: Handler)
+- once(event: string, eventHandler: Handler)
+- toString()
+
+## Information functions:
+- polarity: Polarity
+- polarityBetween(other: Information): Polarity
+- static NULL: Information
+- toString(): string
+- clone(): Information
+
+## LocaleInformation functions:
+- position: Vector3
+- velocity: Vector3
+- rotation: Vector3
+- mass: number
+- time: number
+- update(): void
+- clearQueue(): void
+- forceBetween(other: LocaleInformation): Vector3
+- visibleObjects(): LocaleInformation[]
+- updateLocaleInformation(info: LocaleInformation): void
+- removeLocaleInformation(info: LocaleInformation): void
+- has(info: LocaleInformation | Environment): boolean
+- get(info: LocaleInformation | Environment): LocaleInformation | undefined
+- set(info: LocaleInformation, value: LocaleInformation): void
+- values(): LocaleInformation[]
+- on(event: string, eventHandler: Handler): void
+- off(event: string, eventHandler: Handler): void
+- once(event: string, eventHandler: Handler): void
+- emit(event: string, info: LocaleInformation): void
+- toString(): string
+- clone(): LocaleInformation
+
+## Polarity functions:
+- get absorb(): number
+- set absorb(value: number)
+- get listen(): number
+- set listen(value: number)
+- get execute(): number
+- set execute(value: number)
+- get mediate(): number
+- set mediate(value: number)
+- get emit(): number
+- set emit(value: number)
+- set(absorb: number, listen: number, execute: number, mediate: number, emit: number)
+- get(): [number, number, number, number, number]
+- toString(): string
+- clone(): Polarity
+
+## Handler functions:
+- target: any
+- constructor(event: string, callback: Function, executeOnce: boolean)
+- handle(event: string, info: LocaleInformation): void
+
+## Ray functions:
+- intersectsSphere(ray: Ray, radius: number): boolean
+
+## Renderer functions:
+- render(position: Vector3, direction: Vector3, radius: Vector3)
+
+# Graph
+
+
+```mermaid
+graph LR
+    A[Environment] --> B[Information]
+    A --> C[LocaleInformation]
+    A --> D[Polarity]
+    A --> E[Handler]
+    A --> G[Ray]
+    A --> H[Renderer]
+    B --> I[NULL]
+    C --> J[position]
+    C --> K[velocity]
+    C --> L[rotation]
+    C --> M[mass]
+    C --> N[time]
+    C --> O[update]
+    C --> P[clearQueue]
+    C --> Q[forceBetween]
+    C --> R[visibleObjects]
+    C --> S[updateLocaleInformation]
+    C --> T[removeLocaleInformation]
+    C --> U[has_info_LocaleInformation___Environment_]
+    C --> V[get_info_LocaleInformation___Environment_]
+    C --> W[set_info_LocaleInformation__value_LocaleInformation_]
+    C --> X[values]
+    C --> Y[on_event_string__eventHandler_Handler_]
+    C --> Z[off_event_string__eventHandler_Handler_]
+    C --> AA[once_event_string__eventHandler_Handler_]
+    C --> AB[emit_event_string__info_LocaleInformation_]
+    C --> AC[toString]
+    C --> AD[clone]
+    D --> AE[get_absorb]
+    D --> AF[set_absorb_value_number]
+    D --> AG[get_listen]
+    D --> AH[set_listen_value_number]
+    D --> AI[get_execute]
+    D --> AJ[set_execute_value_number]
+    D --> AK[get_mediate]
+    D --> AL[set_mediate_value_number]
+    D --> AM[get_emit]
+    D --> AN[set_emit_value_number]
+    D --> AO[set_absorb_number_listen_number_execute_number_mediate_number_emit_number]
+    D --> AP[get]
+    D --> AQ[toString]
+    D --> AR[clone]
+    E --> AS[target]
+    E --> AT[constructor_event_string_callback_Function_executeOnce_boolean]
+    E --> AU[handle_event_string_info_LocaleInformation]
+    F --> AW[addLocaleInformation_info_LocaleInformation_position_Vector3_radius_Vector3]
+    F --> AX[updateLocaleInformation_info_LocaleInformation]
+    F --> AY[removeLocaleInformation_info_LocaleInformation]
+    F --> AZ[update]
+    F --> BA[clearQueue]
+    F --> BB[on_event_string_eventHandler_Handler]
+    F --> BC[off_event_string_eventHandler_Handler]
+    F --> BD[once_event_string_eventHandler_Handler]
+    F --> BE[toString]
+    F --> BF[clone]
+    G --> BG[intersectsSphere_ray_Ray_radius_number]
+    H --> BH[render_position_Vector3_direction_Vector3_radius_Vector3]
+```
+
+
+```graphviz
+digraph G {
+    A[Environment] -> B[Information]
+    A -> C[LocaleInformation]
+    A -> D[Polarity]
+    A -> E[Handler]
+    A -> G[Ray]
+    A -> H[Renderer]
+    B -> I[NULL]
+    C -> J[position]
+    C -> K[velocity]
+    C -> L[rotation]
+    C -> M[mass]
+    C -> N[time]
+    C -> O[update]
+    C -> P[clearQueue]
+    C -> Q[forceBetween]
+    C -> R[visibleObjects]
+    C -> S[updateLocaleInformation]
+    C -> T[removeLocaleInformation]
+    C -> U[has_info_LocaleInformation___Environment_]
+    C -> V[get_info_LocaleInformation___Environment_]
+    C -> W[set_info_LocaleInformation__value_LocaleInformation_]
+    C -> X[values]
+    C -> Y[on_event_string__eventHandler_Handler_]
+    C -> Z[off_event_string__eventHandler_Handler_]
+    C -> AA[once_event_string__eventHandler_Handler_]
+    C -> AB[emit_event_string__info_LocaleInformation_]
+    C -> AC[toString]
+    C -> AD[clone]
+    D -> AE[get_absorb]
+    D -> AF[set_absorb_value_number]
+    D -> AG[get_listen]
+    D -> AH[set_listen_value_number]
+    D -> AI[get_execute]
+    D -> AJ[set_execute_value_number]
+    D -> AK[get_mediate]
+    D -> AL[set_mediate_value_number]
+    D -> AM[get_emit]
+    D -> AN[set_emit_value_number]
+    D -> AO[set_absorb_number_listen_number_execute_number_mediate_number_emit_number]
+    D -> AP[get]
+    D -> AQ[toString]
+    D -> AR[clone]
+    E -> AS[target]
+    E -> AT[constructor_event_string_callback_Function_executeOnce_boolean]
+    E -> AU[handle_event_string_info_LocaleInformation]
+    F -> AW[addLocaleInformation_info_LocaleInformation_position_Vector3_radius_Vector3]
+    F -> AX[updateLocaleInformation_info_LocaleInformation]
+    F -> AY[removeLocaleInformation_info_LocaleInformation]
+    F -> AZ[update]
+    F -> BA[clearQueue]
+    F -> BB[on_event_string
+    eventHandler_Handler]
+    F -> BC[off_event_string_eventHandler_Handler]
+    F -> BD[once_event_string_eventHandler_Handler]
+    F -> BE[toString]
+    F -> BF[clone]
+    G -> BG[intersectsSphere_ray_Ray_radius_number]
+    H -> BH[render_position_Vector3_direction_Vector3_radius_Vector3]
+}
+
+```
+
+# class diagram
+```mermaid
 classDiagram
-    class Environment{
-        +Polarity polarity();
-        +Environment parent();
-        +Environment[] children();
-        +LocaleInformation absorb(LocalEnvironment le);
-        +LocaleInformation listen(LocalEnvironment le);
-        +LocaleInformation execute(LocalEnvironment le);
-        +LocaleInformation mediate(LocalEnvironment le);
-        +LocaleInformation emit(LocalEnvironment le);
-        +LocaleInformation getLocaleInformation(Vector3 position, Vector3 radius);
-        +addLocaleInformation(LocaleInformation info, Vector3 position, Vector3 radius);
-        +updateLocaleInformation(LocaleInformation info);
-        +removeLocaleInformation(LocaleInformation info);
-        +LocaleInformation queue;
-        +update();
-        +clearQueue();
-        +on(string event, Handler eventHandler);
-        +off(string event, Handler eventHandler);
-        +once(string event, Handler eventHandler);
+    class Environment
+    class Information
+    class LocaleInformation
+    class Polarity
+    class Handler
+    class Ray
+    class Renderer
+
+    Environment <|-- Information
+    Environment <|-- LocaleInformation
+    Environment <|-- Polarity
+    Environment <|-- Handler
+    Environment <|-- Ray
+    Environment <|-- Renderer
+
+    class information {
+        +Polarity polarity;
+        +polarityBetween(other: Information): Polarity
+        +static NULL: Information
+        +toString(): string
+        +clone(): Information
     }
-    class LocaleInformation {
-        +Environment parent;
-        +Environment source;
-        +number time;
+    class localeInformation {
         +Vector3 position;
         +Vector3 velocity;
         +Vector3 rotation;
-        +Vector3 radius;
-        +set(+Vector3 position, +Vector3 velocity, +Vector3 rotation);
-        +LocaleInformation[] children();
-        +updateLocaleInformation(LocaleInformation info);
-        +removeLocaleInformation(LocaleInformation info);
-        +update();
-        +clearQueue();
-        +on(string event, Handler eventHandler);
-        +off(string event, Handler eventHandler);
-        +once(string event, Handler eventHandler);
+        +number mass;
+        +number time;
+        +update(): void
+        +clearQueue(): void
+        +forceBetween(other: LocaleInformation): Vector3
+        +visibleObjects(): LocaleInformation[]
+        +updateLocaleInformation(info: LocaleInformation): void
+        +removeLocaleInformation(info: LocaleInformation): void
+        +has_info_LocaleInformation___Environment_: boolean
+        +get_info_LocaleInformation___Environment_: LocaleInformation
+        +set_info_LocaleInformation__value_LocaleInformation_: void
+        +values: LocaleInformation[]
+        +on(event: string, eventHandler: Handler): void
+        +off(event: string, eventHandler: Handler): void
+        +once(event: string, eventHandler: Handler): void
+        +emit(event: string, info: LocaleInformation): void
+        +toString(): string
+        +clone(): LocaleInformation
     }
-    class Handler {
-        +LocaleInformation target;
-        +added(LocaleInformation info)
-        +updated(LocaleInformation info)
-        +removed(LocaleInformation info)
-    }
-    class Polarity {
-        +Environment stateSource;
+    class polarity {
         +number absorb;
         +number listen;
         +number execute;
         +number mediate;
         +number emit;
-        +Polarity compare(Polarity other);
-        +Vector3 forceBetween(Polarity other, Vector3 distance);
-        +void set(number absorb, number listen, number execute, number mediate, number emit);
+        +setAbsorb(number listen, number execute, number mediate, number emit): void
+        +get(): number[]
+        +toString(): string
+        +clone(): Polarity
     }
-    class Vector3 {
-        +number x;
-        +number y;
-        +number z;
+    class handler {
+        +target: Environment;
+        +constructor(event: string, callback: Function, executeOnce: boolean): void
+        +handle(event: string, info: LocaleInformation): void
+    }
+    class ray {
+        +intersectsSphere(ray: Ray, radius: number): boolean
+    }
+    class renderer {
+        +render(position: Vector3, direction: Vector3, radius: Vector3): void
     }
 
-TASK: Given the above class diagram, provide a general descriptiob of the following classes and their relationships.
-RESPONSE: 
+    Information <|-- information
+    LocaleInformation <|-- localeInformation
+    Polarity <|-- polarity
+    Handler <|-- handler
+    Ray <|-- ray
+    Renderer <|-- renderer
 
-The above classes describe a hierarchical environment, where the environment is a collection of LocaleInformation objects. The LocaleInformation objects contain information about the locale, and may contain other LocaleInformation objects. The LocaleInformation objects are affected by the Polarity of the Environment they are in.
-The Environment class is a collection of LocaleInformation objects. The Environment class also contains a Polarity object, which describes the general state of the Environment. The Environment class also contains a queue, which is a collection of LocaleInformation objects that are waiting to be updated.
-The LocaleInformation class contains information about a specific locale, such as its position, velocity, and rotation. The LocaleInformation class also contains a reference to its parent Environment. The LocaleInformation class also contains a queue, which is a collection of LocaleInformation objects that are waiting to be updated.
-The Handler class contains a reference to a specific LocaleInformation object. The Handler class also contains a method for each event that is triggered by the LocaleInformation object. The Handler class is used to listen for changes to a specific LocaleInformation object.
-The Polarity class contains a reference to the Environment that is using the Polarity object. The Polarity class also contains five numbers, which describe the general state of the Environment. The Polarity object also contains a method to compare two Polarity objects, and a method to calculate the force between two Polarity objects.
-The Vector3 class contains three numbers, which describe a 3D vector. (this class already exists in ./src/vector.ts)
+    Information <.. LocaleInformation
+    Information <.. Polarity
+    Information <.. Handler
+    Information <.. Ray
+    Information <.. Renderer
+
+    Information <|-- Environment
+    LocaleInformation <|-- Environment
+    Polarity <|-- Environment
+    Handler <|-- Environment
+    Ray <|-- Environment
+    Renderer <|-- Environment
+```
+
+# sequence diagram
+
+```mermaid
+sequenceDiagram
+    participant A as Information
+    participant B as LocaleInformation
+    participant C as Polarity
+    participant D as Handler
+    participant F as Ray
+    participant G as Renderer
+
+    A ->> A: polarity
+    A ->> A: polarityBetween(other: Information)
+    A ->> A: static NULL
+    A ->> A: toString()
+    A ->> A: clone()
+
+    B ->> B: position
+    B ->> B: velocity
+    B ->> B: rotation
+    B ->> B: mass
+    B ->> B: time
+    B ->> B: update()
+    B ->> B: clearQueue()
+    B ->> B: forceBetween(other: LocaleInformation)
+    B ->> B: visibleObjects()
+    B ->> B: updateLocaleInformation(info: LocaleInformation)
+    B ->> B: removeLocaleInformation(info: LocaleInformation)
+    B ->> B: has(info: LocaleInformation | Environment)
+    B ->> B: get(info: LocaleInformation | Environment)
+    B ->> B: set(info: LocaleInformation, value: LocaleInformation)
+    B ->> B: values()
+    B ->> B: on(event: string, eventHandler: Handler)
+    B ->> B: off(event: string, eventHandler: Handler)
+    B ->> B: once(event: string, eventHandler: Handler)
+    B ->> B: emit(event: string, info: LocaleInformation)
+    B ->> B: toString()
+    B ->> B: clone()
+
+    C ->> C: absorb
+    C ->> C: listen
+    C ->> C: execute
+    C ->> C: mediate
+    C ->> C: emit
+    C ->> C: set(absorb: number, listen: number, execute: number, mediate: number, emit: number)
+    C ->> C: get()
+    C ->> C: toString()
+    C ->> C: clone()
+
+    D ->> D: target
+    D ->> D: constructor(event: string, callback: Function, executeOnce: boolean)
+    D ->> D: handle(event: string, info: LocaleInformation)
+
+    E ->> E: addLocaleInformation(info: LocaleInformation, position: Vector3, radius: Vector3)
+    E ->> E: updateLocaleInformation(info: LocaleInformation)
+    E ->> E: removeLocaleInformation(info: LocaleInformation)
+    E ->> E: update()
+    E ->> E: clearQueue()
+    E ->> E: on(event: string, eventHandler: Handler)
+    E ->> E: off(event: string, eventHandler: Handler)
+    E ->> E: once(event: string, eventHandler: Handler)
+    E ->> E: toString()
+    E ->> E: clone()
+
+    F ->> F: intersectsSphere(ray: Ray, radius: number)
+
+    G ->> G: render(position: Vector3, direction: Vector3, radius: Vector3)
+```
+
+# graphviz
 
 
-
-*/
+```graphviz
+    digraph G {
+        graph [rankdir=LR];
+        node [shape=box];
+        a [label="Information"];
+        b [label="LocaleInformation"];
+        c [label="Polarity"];
+        d [label="Handler"];
+        e [label="Environment"];
+        f [label="Ray"];
+        g [label="Renderer"];
+        a -> a [label="polarity"];
+        a -> a [label="polarityBetween(other: Information)"];
+        a -> a [label="static NULL"];
+        a -> a [label="toString()"];
+        a -> a [label="clone()"];
+        b -> b [label="position"];
+        b -> b [label="velocity"];
+        b -> b [label="rotation"];
+        b -> b [label="mass"];
+        b -> b [label="time"];
+        b -> b [label="update()"];
+        b -> b [label="clearQueue()"];
+        b -> b [label="forceBetween(other: LocaleInformation)"];
+        b -> b [label="visibleObjects()"];
+        b -> b [label="updateLocaleInformation(info: LocaleInformation)"];
+        b -> b [label="removeLocaleInformation(info: LocaleInformation)"];
+        b -> b [label="has(info: LocaleInformation | Environment)"];
+        b -> b [label="get(info: LocaleInformation | Environment)"];
+        b -> b [label="set(info: LocaleInformation, value: LocaleInformation)"];
+        b -> b [label="values()"];
+        b -> b [label="on(event: string, eventHandler: Handler)"];
+        b -> b [label="off(event: string, eventHandler: Handler)"];
+        b -> b [label="once(event: string, eventHandler: Handler)"];
+        b -> b [label="emit(event: string, info: LocaleInformation)"];
+        b -> b [label="toString()"];
+        b -> b [label="clone()"];
+        c -> c [label="absorb"];
+        c -> c [label="listen"];
+        c -> c [label="execute"];
+        c -> c [label="mediate"];
+        c -> c [label="emit"];
+        c -> c [label="set(absorb: number, listen: number, execute: number, mediate: number, emit: number)"];
+        c -> c [label="get()"];
+        c -> c [label="toString()"];
+        c -> c [label="clone()"];
+        d -> d [label="target"];
+        d -> d [label="constructor(event: string, callback: Function, executeOnce: boolean)"];
+        d -> d [label="handle(event: string, info: LocaleInformation)"];
+        e -> e [label="addLocaleInformation(info: LocaleInformation, position: Vector3, radius: Vector3)"];
+        e -> e [label="updateLocaleInformation(info: LocaleInformation)"];
+        e -> e [label="removeLocaleInformation(info: LocaleInformation)"];
+        e -> e [label="update()"];
+        e -> e [label="clearQueue()"];
+        e -> e [label="on(event: string, eventHandler: Handler)"];
+        e -> e [label="off(event: string, eventHandler: Handler)"];
+        e -> e [label="once(event: string, eventHandler: Handler)"];
+        e -> e [label="toString()"];
+        e -> e [label="clone()"];
+        f -> f [label="intersectsSphere(ray: Ray, radius: number)"];
+        g -> g [label="render(position: Vector3, direction: Vector3, radius: Vector3)"];
+    }
+```
