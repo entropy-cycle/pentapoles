@@ -30,6 +30,13 @@ class Polarity {
         polarity._pentuple = pentuple_1.Pentuple.compare(self._pentuple, other._pentuple);
         return polarity;
     }
+    get energy() { return this.getAsPentuple(); }
+    get entropy() { return this.getAsPentuple(); }
+    get mass() {
+        return this.absorb + this.listen + this.execute + this.mediate + this.emit;
+    }
+    get frequency() { return this.mass / 5; }
+    get amplitude() { return this.mass / 5; }
     getAsHexagram() {
         let hexagram = 0;
         hexagram += this.absorb === 1 ? 1 : 0;

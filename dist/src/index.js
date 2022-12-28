@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EntityFactory = exports.Entity = exports.Polarity = exports.Vector2 = exports.Vector3 = exports.Information = exports.Environment = void 0;
+exports.Hexagram = exports.Pentuple = exports.Polarity = exports.Vector2 = exports.Vector3 = exports.Information = exports.Environment = void 0;
 const environment_1 = require("./environment");
 Object.defineProperty(exports, "Environment", { enumerable: true, get: function () { return environment_1.Environment; } });
 const information_1 = require("./information");
@@ -10,7 +10,7 @@ Object.defineProperty(exports, "Vector3", { enumerable: true, get: function () {
 Object.defineProperty(exports, "Vector2", { enumerable: true, get: function () { return vector_1.Vector2; } });
 const polarity_1 = require("./polarity");
 Object.defineProperty(exports, "Polarity", { enumerable: true, get: function () { return polarity_1.Polarity; } });
-const entity_1 = require("./entity");
-Object.defineProperty(exports, "Entity", { enumerable: true, get: function () { return entity_1.Entity; } });
-const entityFactory_1 = require("./entityFactory");
-Object.defineProperty(exports, "EntityFactory", { enumerable: true, get: function () { return entityFactory_1.EntityFactory; } });
+const pentuple_1 = require("./pentuple");
+Object.defineProperty(exports, "Pentuple", { enumerable: true, get: function () { return pentuple_1.Pentuple; } });
+const hexagram_1 = require("./hexagram");
+Object.defineProperty(exports, "Hexagram", { enumerable: true, get: function () { return hexagram_1.Hexagram; } });

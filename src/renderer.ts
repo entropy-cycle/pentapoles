@@ -1,7 +1,13 @@
 import { Environment } from './environment';
-import { Information, LocaleInformation } from './information';
+import { Information } from './information';
 import { Ray } from './ray';
 import { Vector3 } from './vector';
+
+
+const renderColors = {
+
+}
+
 
 export class Renderer {
     canvas: HTMLCanvasElement;
@@ -28,13 +34,20 @@ export class Renderer {
                 x.fillStyle = 'red';
                 x.fill();
                 // render the object's children, scaling them all so that their positions and scales are relative to the parent
-                if(info.source) info.source.children.forEach((child: Information) => {
-                    const childInfo = child as LocaleInformation;
-                    x.beginPath();
-                    x.arc(childInfo.position.x, childInfo.position.y, 10, 0, 2 * Math.PI);
-                    x.fillStyle = 'blue';
-                    x.fill();
-                });
+                if(info.source) {
+                    const infoSource = info.source as Environment;
+                    infoSource.children.forEach((child: Environment) => {
+                        if(child.isPhysical) {
+                            const childInfo = child.information as Information;
+                            x.beginPath();
+                            x.arc(childInfo.position.x, childInfo.position.y, 10, 0, 2 * Math.PI);
+                            x.fillStyle = 'blue';
+                            x.fill();
+                        } else {
+                            // field
+                        }
+                    });
+                }
             }
         });
     }

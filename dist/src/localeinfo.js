@@ -106,7 +106,7 @@ class LocaleInformation extends information_1.Information {
     }
     values() {
         if (this.source === envbase_1.EnvironmentBase.NULL)
-            return;
+            return [];
         const children = this.source.children;
         return children.map(child => child.information);
     }

@@ -1,6 +1,8 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
 import { Environment } from './environment';
+import { Information } from './information';
+import { Vector3 } from './vector';
 export declare abstract class EnvironmentRoot extends EventEmitter {
 }
 declare class NullBase extends EnvironmentRoot {
@@ -19,5 +21,12 @@ export declare abstract class EnvironmentBase extends EnvironmentRoot {
     get isQueueFull(): boolean;
     get isPhysical(): boolean;
     static NULL: NullBase;
+    clearQueue(): void;
+    getLocaleInformation(position: Vector3, radius: Vector3): Information[];
+    getGlobalInformation(): Information;
+    has(childEnvironment: Environment): boolean;
+    set(childEnvironment: Environment, replaceWith: Environment): void;
+    get(position: Vector3, radius: Vector3): Environment[];
+    toString(): string;
 }
 export {};

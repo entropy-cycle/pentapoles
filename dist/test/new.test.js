@@ -2,6 +2,7 @@
 // mocha tests for ../src/new.ts. tests the following: 
 //
 // Environment class:
+// - constructor(parent: EnvironmentRoot, radius: Vector3)
 // - addLocality(info: Environment, position: Vector3, radius: Vector3)
 // - addLocaleInformation(info: LocaleInformation, position: Vector3, radius: Vector3)
 // - updateLocaleInformation(info: LocaleInformation)
@@ -60,15 +61,20 @@
 // this test coverage is implemented using the mocha testing framework.
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai_1 = require("chai");
-const new_1 = require("../src/new");
+const environment_1 = require("../src/environment");
+const localeinfo_1 = require("../src/localeinfo");
+const information_1 = require("../src/information");
+const polarity_1 = require("../src/polarity");
+const handler_1 = require("../src/handler");
+const vector_1 = require("../src/vector");
 describe('Environment', () => {
     let info;
     let position;
     let radius;
     beforeEach(() => {
-        info = new new_1.Environment();
-        position = new new_1.Vector3(0, 0, 0);
-        radius = new new_1.Vector3(0, 0, 0);
+        info = new environment_1.Environment();
+        position = new vector_1.Vector3(0, 0, 0);
+        radius = new vector_1.Vector3(0, 0, 0);
     });
     describe('addLocality(info: Environment, position: Vector3, radius: Vector3)', () => {
         it('should add a locality to the environment', () => {
@@ -112,20 +118,20 @@ describe('Environment', () => {
     });
     describe('on(event: string, eventHandler: Handler)', () => {
         it('should add an event handler to the environment', () => {
-            info.on("test", new new_1.Handler(() => { }, null));
+            info.on("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(1);
         });
     });
     describe('off(event: string, eventHandler: Handler)', () => {
         it('should remove an event handler from the environment', () => {
-            info.on("test", new new_1.Handler(() => { }, null));
-            info.off("test", new new_1.Handler(() => { }, null));
+            info.on("test", new handler_1.Handler(() => { }, null));
+            info.off("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(0);
         });
     });
     describe('once(event: string, eventHandler: Handler)', () => {
         it('should add an event handler to the environment', () => {
-            info.once("test", new new_1.Handler(() => { }, null));
+            info.once("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(1);
         });
     });
@@ -138,7 +144,7 @@ describe('Environment', () => {
 describe('Handler', () => {
     let handler;
     beforeEach(() => {
-        handler = new new_1.Handler(() => { }, null);
+        handler = new handler_1.Handler(() => { }, null);
     });
     describe('call(...args: any[])', () => {
         it('should call the handler', () => {
@@ -159,7 +165,7 @@ describe('Handler', () => {
 describe('Polarity', () => {
     let polarity;
     beforeEach(() => {
-        polarity = new new_1.Polarity();
+        polarity = new polarity_1.Polarity();
     });
     describe('get absorb(): number', () => {
         it('should return a number', () => {
@@ -230,21 +236,21 @@ describe('Polarity', () => {
 describe('Information', () => {
     let info;
     beforeEach(() => {
-        info = new new_1.Information();
+        info = new information_1.Information();
     });
     describe('polarity: Polarity', () => {
         it('should return a polarity', () => {
-            (0, chai_1.expect)(info.polarity).to.be.an.instanceof(new_1.Polarity);
+            (0, chai_1.expect)(info.polarity).to.be.an.instanceof(polarity_1.Polarity);
         });
     });
     describe('polarityBetween(other: Information): Polarity', () => {
         it('should return a polarity', () => {
-            (0, chai_1.expect)(info.polarityBetween(info)).to.be.an.instanceof(new_1.Polarity);
+            (0, chai_1.expect)(info.polarityBetween(info)).to.be.an.instanceof(polarity_1.Polarity);
         });
     });
     describe('static NULL: Information', () => {
         it('should return an information', () => {
-            (0, chai_1.expect)(new_1.Information.NULL).to.be.an.instanceof(new_1.Information);
+            (0, chai_1.expect)(information_1.Information.NULL).to.be.an.instanceof(information_1.Information);
         });
     });
     describe('toString(): string', () => {
@@ -254,7 +260,7 @@ describe('Information', () => {
     });
     describe('clone(): Information', () => {
         it('should return an information', () => {
-            (0, chai_1.expect)(info.clone()).to.be.an.instanceof(new_1.Information);
+            (0, chai_1.expect)(info.clone()).to.be.an.instanceof(information_1.Information);
         });
     });
 });
@@ -263,9 +269,9 @@ describe('LocaleInformation', () => {
     let position;
     let radius;
     beforeEach(() => {
-        info = new new_1.LocaleInformation();
-        position = new new_1.Vector3(0, 0, 0);
-        radius = new new_1.Vector3(0, 0, 0);
+        info = new localeinfo_1.LocaleInformation();
+        position = new vector_1.Vector3(0, 0, 0);
+        radius = new vector_1.Vector3(0, 0, 0);
     });
     describe('addLocaleInformation(info: LocaleInformation, position: Vector3, radius: Vector3)', () => {
         it('should add a locale information to the locale information', () => {
@@ -301,20 +307,20 @@ describe('LocaleInformation', () => {
     });
     describe('on(event: string, eventHandler: Handler)', () => {
         it('should add an event handler to the locale information', () => {
-            info.on("test", new new_1.Handler(() => { }, null));
+            info.on("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(1);
         });
     });
     describe('off(event: string, eventHandler: Handler)', () => {
         it('should remove an event handler from the locale information', () => {
-            info.on("test", new new_1.Handler(() => { }, null));
-            info.off("test", new new_1.Handler(() => { }, null));
+            info.on("test", new handler_1.Handler(() => { }, null));
+            info.off("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(0);
         });
     });
     describe('once(event: string, eventHandler: Handler)', () => {
         it('should add an event handler to the locale information', () => {
-            info.once("test", new new_1.Handler(() => { }, null));
+            info.once("test", new handler_1.Handler(() => { }, null));
             (0, chai_1.expect)(info.eventHandlers.length).to.equal(1);
         });
     });
@@ -324,3 +330,7 @@ describe('LocaleInformation', () => {
         });
     });
 });
+/*
+The following is a condensed abstract for test writers. The below should give anyone writing test coverage for the above class enough information to write the tests.
+
+*/

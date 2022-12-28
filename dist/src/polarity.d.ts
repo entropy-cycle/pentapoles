@@ -5,6 +5,11 @@ export declare class Polarity {
     _pentuple: Pentuple;
     constructor(stateSource: EnvironmentRoot | undefined, initialPentuple?: number);
     static compare(self: Polarity, other: Polarity): Polarity;
+    get energy(): number;
+    get entropy(): number;
+    get mass(): number;
+    get frequency(): number;
+    get amplitude(): number;
     getAsHexagram(): number;
     setAsHexagram(hexagram: number): void;
     getAsPentuple(): number;
