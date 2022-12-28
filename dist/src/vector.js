@@ -19,6 +19,7 @@ class Vector2 {
     normalize() { return this.divideScalar(this.length()); }
     normal() { return this.clone().normalize(); }
     clone() { return new Vector2(this.x, this.y); }
+    equals(v) { return this.x == v.x && this.y == v.y; }
     toString() { return `(${this.x},${this.y})`; }
     static random(vecMin, vecMax) { return new Vector2(Math.random() * (vecMax.x - vecMin.x) + vecMin.x, Math.random() * (vecMax.y - vecMin.y) + vecMin.y); }
     static r(num) { return Vector2.random(new Vector2(-num, -num), new Vector2(num, num)); }
@@ -43,6 +44,7 @@ class Vector3 {
     normalize() { return this.divideScalar(this.length()); }
     normal() { return this.clone().normalize(); }
     clone() { return new Vector3(this.x, this.y, this.z); }
+    equals(v) { return this.x == v.x && this.y == v.y && this.z == v.z; }
     projectTo2d(camera, screen, rotation = new Vector3(1, 1, 1), scale = 100) {
         let v = this.sub(camera);
         let x = v.dot(new Vector3(rotation.x, 0, 0));

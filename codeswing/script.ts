@@ -1,21 +1,78 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FieldLine = exports.EnvironmentRenderer = exports.randomDipoles = exports.Dipole = exports.Pole = exports.Emission = exports.Emitter = exports.Mediation = exports.Mediative = exports.Execution = exports.Executive = exports.Listening = exports.Listener = exports.Absorption = exports.Absorber = exports.LocalInformation = exports.Environment = exports.Vector3 = exports.Vector2 = void 0;
-const vector_1 = require("./vector");
-Object.defineProperty(exports, "Vector2", { enumerable: true, get: function () { return vector_1.Vector2; } });
-Object.defineProperty(exports, "Vector3", { enumerable: true, get: function () { return vector_1.Vector3; } });
+function logToPre(text: string) {
+    const pre: any = document.getElementById("log");
+    pre.textContent += text + "\n";
+}
+class Vector2 {
+    x: number; y: number;
+    constructor(x: number, y: number) { this.x = x; this.y = y; }
+    add(v: Vector2): Vector2 { return new Vector2(this.x + v.x, this.y + v.y); }
+    sub(v: Vector2): Vector2 { return new Vector2(this.x - v.x, this.y - v.y); }
+    multiply(v: Vector2): Vector2 { return new Vector2(this.x * v.x, this.y * v.y); }
+    divide(v: Vector2): Vector2 { return new Vector2(this.x / v.x, this.y / v.y); }
+    dot(v: Vector2): number { return this.x * v.x + this.y * v.y; }
+    multiplyScalar(s: number): Vector2 { return new Vector2(this.x * s, this.y * s); }
+    divideScalar(s: number): Vector2 { return new Vector2(this.x / s, this.y / s); }
+    length(): number { return Math.sqrt(this.x * this.x + this.y * this.y); }
+    distanceTo(v: Vector2): number { return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2)); }
+    distanceToX(v: Vector2): number { return Math.abs(this.x - v.x); }
+    distanceToY(v: Vector2): number { return Math.abs(this.y - v.y); }
+    directionTo(v: Vector2): Vector2 { return v.sub(this).normal(); }
+    angleTo(v: Vector2): number { return Math.acos(this.dot(v) / (this.length() * v.length())); }
+    normalize(): Vector2 { return this.divideScalar(this.length()); }
+    normal(): Vector2 { return this.clone().normalize(); }
+    clone(): Vector2 { return new Vector2(this.x, this.y); }
+    toString(): string { return `(${this.x},${this.y})`; }
+    static random(vecMin: Vector2, vecMax: Vector2): Vector2 { 
+      return new Vector2(Math.random() * (vecMax.x - vecMin.x) + vecMin.x, Math.random() * (vecMax.y - vecMin.y) + vecMin.y); }
+    static r(num: number) { return Vector2.random(new Vector2(-num, -num), new Vector2(num, num)); }
+}
+class Vector3 {
+    x: number; y: number; z: number;
+    constructor(x: number, y: number, z: number) { this.x = x; this.y = y; this.z = z; }
+    add(v: Vector3): Vector3 { return new Vector3(this.x + v.x, this.y + v.y, this.z + v.z); }
+    sub(v: Vector3): Vector3 { return new Vector3(this.x - v.x, this.y - v.y, this.z - v.z); }
+    multiply(v: Vector3): Vector3 { return new Vector3(this.x * v.x, this.y * v.y, this.z * v.z); }
+    divide(v: Vector3): Vector3 { return new Vector3(this.x / v.x, this.y / v.y, this.z / v.z); }
+    dot(v: Vector3): number { return this.x * v.x + this.y * v.y + this.z * v.z; }
+    multiplyScalar(s: number): Vector3 { return new Vector3(this.x * s, this.y * s, this.z * s); }
+    divideScalar(s: number): Vector3 { return new Vector3(this.x / s, this.y / s, this.z / s); }
+    length(): number { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+    distanceTo(v: Vector3): number { return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2) + Math.pow(this.z - v.z, 2)); }
+    distanceToX(v: Vector3): number { return Math.abs(this.x - v.x); }
+    distanceToY(v: Vector3): number { return Math.abs(this.y - v.y); }
+    distanceToZ(v: Vector3): number { return Math.abs(this.z - v.z); }
+    directionTo(v: Vector3): Vector3 { return v.sub(this).normal(); }
+    angleTo(v: Vector3): number { return Math.acos(this.dot(v) / (this.length() * v.length())); }
+    normalize(): Vector3 { return this.divideScalar(this.length()); }
+    normal(): Vector3 { return this.clone().normalize(); }
+    clone(): Vector3 { return new Vector3(this.x, this.y, this.z); }
+    projectTo2d( camera: Vector3, screen: Vector2, rotation: Vector3 = new Vector3(1, 1, 1), scale: number = 100 ): Vector2 {
+        let v = this.sub(camera);
+        let x = v.dot(new Vector3(rotation.x, 0, 0));
+        let y = v.dot(new Vector3(0, rotation.y, 0));
+        let z = v.dot(new Vector3(0, 0, rotation.z));
+        return new Vector2(x / z, y / z).multiplyScalar(scale).add(screen);
+    }
+    toString(): string { return `(${this.x},${this.y},${this.z})`; }
+    static random(vecMin: Vector3, vecMax: Vector3): Vector3 { 
+      return new Vector3(Math.random() * (vecMax.x - vecMin.x) + vecMin.x, Math.random() 
+                         * (vecMax.y - vecMin.y) + vecMin.y, Math.random() * (vecMax.z - vecMin.z) + vecMin.z); }
+    static r(num: number) { return Vector3.random(new Vector3(-num, -num, -num), new Vector3(num, num, num)); }
+}
+
 class Environment {
-    children() { return this._children; }
-    constructor(parent, localInformations = [], globalInformation) {
-        this.parent = parent;
-        this.globalInformation = globalInformation;
-        this._children = [];
+    absorber: any;
+    listener: any;
+    executor: any
+    mediator: any
+    emitter: any;
+    _children: Environment[] = [];
+    children(): Environment[] { return this._children; }
+    constructor(public parent: LocalInformation | null, localInformations: LocalInformation[] = [], public globalInformation: LocalInformation) {
         this.initEnvironment(parent, localInformations, globalInformation);
     }
-    async initEnvironment(parent, localInformations = [], globalInformation) {
-        if (parent) {
-            parent.source.children().push(this);
-        }
+    async initEnvironment(parent: LocalInformation | null, localInformations: LocalInformation[] = [], globalInformation: LocalInformation): Promise<void> {
+        if(parent) { parent.source.children().push(this); }        
         this.absorber = new Absorber(parent, localInformations, globalInformation);
         this.listener = new Listener(parent, localInformations, globalInformation);
         this.executor = new Executive(parent, localInformations, globalInformation);
@@ -25,25 +82,25 @@ class Environment {
             this.absorber.addLocalInformation(localInformation, localInformation.position, localInformation.radius);
         });
     }
-    getGlobalInformation() { return this.globalInformation ? this.globalInformation : this.getGlobalInformation(); }
-    absorb(local) { return this.absorber.absorb(local.source); }
-    listen(local) { return this.listener.listen(local.source); }
-    execute(local) { return this.executor.execute(local.source); }
-    mediate(local) { return this.mediator.mediate(local.source); }
-    emit(local) { return this.emitter.emit(local.source); }
-    observeLocalInformation(position, radius) {
+    getGlobalInformation(): LocalInformation { return this.globalInformation ? this.globalInformation : this.getGlobalInformation(); }
+    absorb(local: LocalInformation): Absorption[] { return this.absorber.absorb(local.source); }
+    listen(local: LocalInformation): Listening[] { return this.listener.listen(local.source); }
+    execute(local: LocalInformation): Execution[] { return this.executor.execute(local.source); }
+    mediate(local: LocalInformation): Mediation[] { return this.mediator.mediate(local.source); }
+    emit(local: LocalInformation): Emission[] { return this.emitter.emit(local.source); }
+    observeLocalInformation(position: Vector3, radius: Vector3): LocalInformation { // gets the local information from the point of view of the environment, affecting the environment
         const compressedInfo = this.compress(position, radius);
         const absorptions = this.absorber.absorb(compressedInfo.convert("emission"));
-        const listenings = absorptions.forEach((absorption) => this.listener.listen(absorption));
-        const listFlat = listenings.reduce((a, b) => a.concat(b), []);
-        const executions = listFlat.forEach((listening) => this.executor.execute(listening));
-        const execFlat = executions.reduce((a, b) => a.concat(b), []);
-        const mediations = execFlat.forEach((execution) => this.mediator.mediate(execution));
-        const medFlat = mediations.reduce((a, b) => a.concat(b), []);
-        const emissions = medFlat.forEach((mediation) => this.emitter.emit(mediation));
-        const emiFlat = emissions.reduce((a, b) => a.concat(b), []);
-        const localInformation = new LocalInformation(null, new vector_1.Vector3(0, 0, 0), new vector_1.Vector3(0, 0, 0));
-        for (let info of emiFlat) {
+        const listenings: any = absorptions.forEach((absorption: any) => this.listener.listen(absorption));
+        const listFlat = listenings.reduce((a: any, b: any) => a.concat(b), []);
+        const executions: any = listFlat.forEach((listening:any) => this.executor.execute(listening));
+        const execFlat = executions.reduce((a: any, b: any) => a.concat(b), []);
+        const mediations: any = execFlat.forEach((execution:any) => this.mediator.mediate(execution));
+        const medFlat = mediations.reduce((a: any, b: any) => a.concat(b), []);
+        const emissions: any = medFlat.forEach((mediation:any) => this.emitter.emit(mediation));
+        const emiFlat = emissions.reduce((a: any, b: any) => a.concat(b), []);
+        const localInformation = new LocalInformation(null, new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+        for(let info of emiFlat) {
             localInformation.position.add(info.position);
         }
         localInformation.position.divideScalar(emiFlat.length);
@@ -51,9 +108,9 @@ class Environment {
         return localInformation;
     }
     // gets the local information from the point of view of the environment, not affecting the environment
-    getLocalInformation(position, radius) {
+    getLocalInformation(position: Vector3, radius: Vector3): LocalInformation { 
         const compressedInfo = this.compress(position, radius);
-        for (let child of this.children()) {
+        for(let child of this.children()) {
             const childLocalInformation = child.getLocalInformation(position, radius);
             compressedInfo.position.add(childLocalInformation.position);
             compressedInfo.visibleObjects.push(...childLocalInformation.visibleObjects);
@@ -61,34 +118,34 @@ class Environment {
         compressedInfo.position.divideScalar(this.children().length);
         return compressedInfo;
     }
-    addLocalInformation(information, position, radius) {
+    addLocalInformation(information: LocalInformation, position: Vector3, radius: Vector3): LocalInformation {
         const localInformation = this.getLocalInformation(position, radius);
         localInformation.add(information);
         return localInformation;
     }
-    updateLocalInformation(information, position) {
+    updateLocalInformation(information: LocalInformation, position: Vector3): LocalInformation {
         const localInformation = this.getLocalInformation(position, information.radius);
         localInformation.subtract(information);
         return localInformation;
     }
-    removeLocalInformation(information, position) {
+    removeLocalInformation(information: LocalInformation, position: Vector3): LocalInformation {
         const localInformation = this.getLocalInformation(position, information.radius);
         localInformation.subtract(information);
         return localInformation;
     }
-    addPole(pole, position, radius) {
+    addPole(pole: Pole, position: Vector3, radius: Vector3): LocalInformation {
         const localInformation = this.getLocalInformation(position, radius);
         localInformation.source = pole;
         return localInformation;
     }
-    getPoles(position, radius) {
+    getPoles(position: Vector3, radius: Vector3): LocalInformation[] {
         const localInformation = this.getLocalInformation(position, radius);
         return localInformation.visibleObjects.filter((local) => local.source instanceof Pole);
     }
-    getVisibleObjects(local, position, radius) {
+    getVisibleObjects(local: LocalInformation, position: Vector3, radius: Vector3): LocalInformation[] {
         // get the visible objects from the point od view of the local information
-        const visibleObjects = [];
-        for (let child of this.children()) {
+        const visibleObjects: any = [];
+        for(let child of this.children()) {
             const childVisibleObjects = child.getVisibleObjects(local, position, radius);
             visibleObjects.push(...childVisibleObjects);
         }
@@ -99,29 +156,27 @@ class Environment {
             return distanceA - distanceB;
         });
         // filter out items that are blocked by other items from the point of view of the local information
-        const visibleObjectsFiltered = [];
-        for (let visibleObject of visibleObjects) {
+        const visibleObjectsFiltered: any = [];
+        for(let visibleObject of visibleObjects) {
             let blocked = false;
-            for (let visibleObjectFiltered of visibleObjectsFiltered) {
-                if (visibleObjectFiltered.position.distanceTo(local.position) < visibleObject.position.distanceTo(local.position)) {
+            for(let visibleObjectFiltered of visibleObjectsFiltered) {
+                if(visibleObjectFiltered.position.distanceTo(local.position) < visibleObject.position.distanceTo(local.position)) {
                     blocked = true;
                     break;
                 }
             }
-            if (!blocked) {
-                visibleObjectsFiltered.push(visibleObject);
-            }
+            if(!blocked) { visibleObjectsFiltered.push(visibleObject); }
         }
         return visibleObjectsFiltered;
     }
     toString() {
         const our = `Environment: ${this.getGlobalInformation().infoType} ${this.getGlobalInformation().infoValue} ${this.getGlobalInformation().position} ${this.getGlobalInformation().radius} ${this.getGlobalInformation().source} ${this.getGlobalInformation().visibleObjects.length} ${this.getGlobalInformation().visibleObjects.map((visibleObject) => visibleObject.infoType).join(' ')}\n`;
-        const children = this.children().map((child) => child.toString()).join("\n");
+        const children: any = this.children().map((child) => child.toString()).join("\n");
         return our + children;
     }
-    clone() {
+    clone(): any {
         const clone = new Environment(this.parent, this.getGlobalInformation().visibleObjects, this.getGlobalInformation().infoValue);
-        for (let child of this.children()) {
+        for(let child of this.children()) {
             clone.children().push(child.clone());
         }
         return clone;
@@ -129,69 +184,64 @@ class Environment {
     // compress the local information of the given area. This will remove all the 
     // local information that is not needed to describe the area. this aggregates the
     // local information into a single local information object
-    compress(position, radius) {
+    compress(position: Vector3, radius: Vector3): LocalInformation {
         const localInformation = this.getLocalInformation(position, radius);
         // we will now remove all the local information that is not needed to describe the area
         const visibleObjects = localInformation.visibleObjects;
-        const visibleObjectsFiltered = [];
-        for (let visibleObject of visibleObjects) {
+        const visibleObjectsFiltered: any = [];
+        for(let visibleObject of visibleObjects) {
             let blocked = false;
-            for (let visibleObjectFiltered of visibleObjectsFiltered) {
-                if (visibleObjectFiltered.position.distanceTo(localInformation.position) < visibleObject.position.distanceTo(localInformation.position)) {
+            for(let visibleObjectFiltered of visibleObjectsFiltered) {
+                if(visibleObjectFiltered.position.distanceTo(localInformation.position) < visibleObject.position.distanceTo(localInformation.position)) {
                     blocked = true;
                     break;
                 }
             }
-            if (!blocked) {
-                visibleObjectsFiltered.push(visibleObject);
-            }
+            if(!blocked) { visibleObjectsFiltered.push(visibleObject); }
         }
         localInformation.visibleObjects = visibleObjectsFiltered;
         return localInformation;
     }
-    render(canvas, position, direction) {
-        const localInformation = this.getLocalInformation(position, new vector_1.Vector3(1, 1, 1));
+
+    render(canvas: any, position: Vector3, direction: Vector3) {
+        const localInformation = this.getLocalInformation(position, new Vector3(1, 1, 1));
         const visibleObjects = localInformation.visibleObjects;
-        const visibleObjectsFiltered = [];
-        for (let visibleObject of visibleObjects) {
+        const visibleObjectsFiltered: any = [];
+        for(let visibleObject of visibleObjects) {
             let blocked = false;
-            for (let visibleObjectFiltered of visibleObjectsFiltered) {
-                if (visibleObjectFiltered.position.distanceTo(localInformation.position) < visibleObject.position.distanceTo(localInformation.position)) {
+            for(let visibleObjectFiltered of visibleObjectsFiltered) {
+                if(visibleObjectFiltered.position.distanceTo(localInformation.position) < visibleObject.position.distanceTo(localInformation.position)) {
                     blocked = true;
                     break;
                 }
             }
-            if (!blocked) {
-                visibleObjectsFiltered.push(visibleObject);
-            }
+            if(!blocked) { visibleObjectsFiltered.push(visibleObject); }
         }
         const canvasContext = canvas.getContext('2d');
         canvasContext.clearRect(0, 0, canvas.width, canvas.height);
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
-        const canvasCenter = new vector_1.Vector3(canvasWidth / 2, canvasHeight / 2, 0);
-        const canvasRadius = new vector_1.Vector3(canvasWidth / 2, canvasHeight / 2, 0);
+        const canvasCenter = new Vector3(canvasWidth / 2, canvasHeight / 2, 0);
+        const canvasRadius = new Vector3(canvasWidth / 2, canvasHeight / 2, 0);
         const canvasLocalInformation = this.getLocalInformation(canvasCenter, canvasRadius);
         const canvasVisibleObjects = canvasLocalInformation.visibleObjects;
-        const canvasVisibleObjectsFiltered = [];
-        for (let visibleObject of canvasVisibleObjects) {
+        const canvasVisibleObjectsFiltered: any = [];
+        for(let visibleObject of canvasVisibleObjects) {
             let blocked = false;
-            for (let visibleObjectFiltered of canvasVisibleObjectsFiltered) {
-                if (visibleObjectFiltered.position.distanceTo(canvasLocalInformation.position) < visibleObject.position.distanceTo(canvasLocalInformation.position)) {
+            for(let visibleObjectFiltered of canvasVisibleObjectsFiltered) {
+                if(visibleObjectFiltered.position.distanceTo(canvasLocalInformation.position) < visibleObject.position.distanceTo(canvasLocalInformation.position)) {
                     blocked = true;
                     break;
                 }
             }
-            if (!blocked) {
-                canvasVisibleObjectsFiltered.push(visibleObject);
-            }
+            if(!blocked) { canvasVisibleObjectsFiltered.push(visibleObject); }
         }
         const canvasVisibleObjectsFilteredSorted = canvasVisibleObjectsFiltered.sort((a, b) => {
             const distanceA = a.position.distanceTo(canvasLocalInformation.position);
             const distanceB = b.position.distanceTo(canvasLocalInformation.position);
             return distanceA - distanceB;
         });
-        for (let visibleObject of canvasVisibleObjectsFilteredSorted) {
+        for(let visibleObject of canvasVisibleObjectsFilteredSorted) {
             const visibleObjectPosition = visibleObject.position.clone().multiply(canvasRadius).add(canvasCenter);
             const visibleObjectRadius = visibleObject.radius.clone().multiply(canvasRadius);
             const visibleObjectColor = visibleObject.infoType === 'emitter' ? 'red' : 'blue';
@@ -213,28 +263,31 @@ class Environment {
         canvasContext.stroke();
     }
 }
-exports.Environment = Environment;
-class LocalInformation {
-    constructor(parent, position, radius) {
-        this.parent = parent;
-        this.position = position;
-        this.radius = radius;
+
+ type infoType = 'absorber' | 'absorption' | 'listener' | 'listening' | 'executive' | 'execution' | 'mediative' | 'mediation' | 'emitter' | 'emission';
+
+ class LocalInformation {
+    infoType: infoType; // the type of information
+    infoValue: any; // the value of the information - this is usually a vector or a number
+    source: any; // if the source is null, then the source is the environment.
+    visibleObjects: LocalInformation[];
+    constructor(public parent: LocalInformation | null, public position: Vector3, public radius: Vector3) { 
         this.source = parent ? parent.source : null;
         this.visibleObjects = [];
         this.infoType = 'emitter';
         this.visibleObjects = parent ? parent.source ? parent.source.getVisibleObjects(this, position, radius) : parent.visibleObjects : [];
     }
-    distanceTo(local) { return this.position.distanceTo(local.position); }
-    angleTo(local) { return this.position.angleTo(local.position); }
-    directionTo(local) { return this.position.directionTo(local.position); }
-    add(local) { this.visibleObjects.push(local); }
-    subtract(local) { this.visibleObjects = this.visibleObjects.filter((visibleObject) => visibleObject !== local); }
-    convert(toType) {
+    distanceTo(local: LocalInformation): number { return this.position.distanceTo(local.position); }
+    angleTo(local: LocalInformation): number { return this.position.angleTo(local.position); }
+    directionTo(local: LocalInformation): Vector3 { return this.position.directionTo(local.position); }
+    add(local: LocalInformation): void { this.visibleObjects.push(local); }
+    subtract(local: LocalInformation): void { this.visibleObjects = this.visibleObjects.filter((visibleObject) => visibleObject !== local); }
+    convert(toType: infoType): any {
         LocalInformation.convert(this, toType);
     }
-    static convert(self, toType) {
+    static convert(self: LocalInformation, toType: infoType): any {
         const source = self.source ? self.source : this;
-        switch (toType) {
+        switch(toType) {
             case 'absorber': return new Absorber(source, self.visibleObjects, self);
             case 'absorption': return new Absorption(self.parent, source, self.position, self.radius);
             case 'listener': return new Listener(source, self.visibleObjects, self);
@@ -247,10 +300,10 @@ class LocalInformation {
             case 'emission': return new Emission(self.parent, source, self.position, self.radius);
         }
     }
-    update() {
-        this.visibleObjects = this.parent
-            ? this.parent.source
-                ? this.parent.source.getVisibleObjects(this, this.position, this.radius) : this.parent.visibleObjects : [];
+    update(): void {
+        this.visibleObjects = this.parent 
+        ? this.parent.source 
+        ? this.parent.source.getVisibleObjects(this, this.position, this.radius) : this.parent.visibleObjects : [];
         this.infoValue = this.visibleObjects.length;
     }
     toString() {
@@ -264,33 +317,33 @@ class LocalInformation {
         clone.visibleObjects = this.visibleObjects;
         return clone;
     }
-    quantumState() { return this.infoValue; }
+    quantumState(): number { return this.infoValue; }
 }
-exports.LocalInformation = LocalInformation;
+
 // Absorber -> Absorption -> Listener -> Listening -> Executive -> Execution -> Mediative -> Mediation -> Emitter -> Emission -< Absorber ...
+
 // an absorber is an environment that absorbs information. absorptive poles absorb Emission and emit Absorption
-class Absorber extends Environment {
-    constructor(parent, informations, information, alignment = new vector_1.Vector3(0, 0, 0)) {
+ class Absorber extends Environment {
+    constructor(
+        public parent: LocalInformation | null, 
+        public informations: LocalInformation[], 
+        public information: LocalInformation,
+        public alignment: Vector3 = new Vector3(0, 0, 0)
+    ) {
         super(parent, informations, information);
-        this.parent = parent;
-        this.informations = informations;
-        this.information = information;
-        this.alignment = alignment;
         this.information.infoType = 'absorber';
         this.information.infoValue = this.informations.length;
-        this.alignment = new vector_1.Vector3(0, 0, 0);
+        this.alignment = new Vector3(0, 0, 0);
     }
-    absorb(local) {
+    absorb(local: Emission): Absorption[] {
         // attract the local information to the absorber and then absorb it
         local.position = this.information.position;
         local.radius = this.information.radius;
         const visibleObjects = local.visibleObjects;
         // if the absorber is local, then the absorption is global. If the absorber is global, then the absorption is local.
         const absorberIsLocal = local.source !== undefined;
-        if (absorberIsLocal) { // local absorber's output is global - thus, the absorption is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.convert("absorption")];
-            } // if there is no parent, then the absorption is global
+        if(absorberIsLocal) { // local absorber's output is global - thus, the absorption is global, meaning it is emitted by the environment
+            if(!this.parent) { return [local.convert("absorption")]; } // if there is no parent, then the absorption is global
             return this.parent.source.absorb(local); // if there is a parent, then the absorption is local
         }
         // else the absorber is global, so the absorption is local, meaning it is emitted by all absorbers as local information
@@ -303,16 +356,14 @@ class Absorber extends Environment {
             return e;
         });
         // emit absorptions for each absorbed emission
-        const absorptions = [], absorbedEmns = [];
-        for (const emission1 of absorbedEmissions) {
-            for (const emission2 of emissions) {
-                if (emission1 === emission2) {
-                    continue;
-                }
+        const absorptions: Absorption[] = [], absorbedEmns: any = []
+        for(const emission1 of absorbedEmissions) {
+            for(const emission2 of emissions) {
+                if(emission1 === emission2) { continue; }
                 const distance = emission1.distanceTo(emission2);
                 const force = this.information.quantumState() * emission1.quantumState() * emission2.quantumState() / distance;
                 // if the emission2 are colliding, then emit a local absorption
-                if (distance < 1) {
+                if(distance < 1) {
                     const absorption = emission1.convert('absorption');
                     absorptions.push(absorption);
                     absorbedEmns.push(emission1);
@@ -321,15 +372,15 @@ class Absorber extends Environment {
             }
         }
         // remove the absorbed emissions from the visible objects
-        for (const absorbedEmn of absorbedEmns) {
+        for(const absorbedEmn of absorbedEmns) {
             const index = visibleObjects.indexOf(absorbedEmn);
-            if (index > -1) {
+            if(index > -1) {
                 visibleObjects.splice(index, 1);
             }
         }
         // emit the local absorptions
-        for (const emission of visibleObjects) {
-            if (emission.infoType === 'emission') {
+        for(const emission of visibleObjects) {
+            if(emission.infoType === 'emission') {
                 absorptions.push(this._doAbsorption(emission, emission.position, emission.radius));
             }
         }
@@ -337,7 +388,7 @@ class Absorber extends Environment {
         return absorptions;
     }
     // actually do the absorption
-    _doAbsorption(emission, position, velocity) {
+    _doAbsorption(emission: LocalInformation, position: Vector3, velocity: Vector3): Absorption {
         const absorption = emission.convert("absorption");
         absorption.position = position;
         absorption.velocity = velocity;
@@ -351,26 +402,18 @@ class Absorber extends Environment {
         return clone;
     }
 }
-exports.Absorber = Absorber;
-class Absorption extends LocalInformation {
-    constructor(parent, self, position, velocity) {
+
+ class Absorption extends LocalInformation {
+    constructor(public parent: LocalInformation | null, public self: LocalInformation, public position: Vector3, public velocity: Vector3) {
         super(parent, position, velocity);
-        this.parent = parent;
-        this.self = self;
-        this.position = position;
-        this.velocity = velocity;
         this.infoType = 'absorption';
         this.infoValue = 0;
         this.source = self.source;
         this.visibleObjects = self.visibleObjects;
-        if (this.parent) {
-            this.infoValue = self.quantumState();
-        }
-        else {
-            this.infoValue = self.quantumState() / this.visibleObjects.length;
-        } // not sure
+        if(this.parent) { this.infoValue = self.quantumState(); }
+        else { this.infoValue = self.quantumState() / this.visibleObjects.length; } // not sure
     }
-    add(absorption) {
+    add(absorption: Absorption) {
         this.infoValue += absorption.quantumState();
         this.visibleObjects = this.visibleObjects.concat(absorption.visibleObjects);
     }
@@ -386,18 +429,19 @@ class Absorption extends LocalInformation {
         return clone;
     }
 }
-exports.Absorption = Absorption;
-class Listener extends Environment {
-    constructor(parent, informations, information, alignment = new vector_1.Vector3(0, 0, 0)) {
-        super(parent, informations, information);
-        this.parent = parent;
-        this.informations = informations;
-        this.information = information;
-        this.alignment = alignment;
+
+ class Listener extends Environment {
+    constructor(
+        public parent: LocalInformation | null, 
+        public informations: LocalInformation[], 
+        public information: LocalInformation,
+        public alignment: Vector3 = new Vector3(0, 0, 0)
+        ) {
+        super(parent, informations, information); 
         this.information.infoType = 'listener';
-        this.alignment = new vector_1.Vector3(0, 0, 0);
+        this.alignment = new Vector3(0, 0, 0);
     }
-    listen(local) {
+    listen(local: Absorption): Listening[] {
         // attract the local information to the listener and then listen to it
         local.position = this.information.position;
         local.radius = this.information.radius;
@@ -405,10 +449,8 @@ class Listener extends Environment {
         local.visibleObjects = visibleObjects;
         // if the listener is local, then the listening is global. If the listener is global, then the listening is local.
         const listenerIsLocal = local.source !== undefined;
-        if (listenerIsLocal) { // local listener's output is global - thus, the listening is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.convert("listening")];
-            } // if there is no parent, then the listening is global
+        if(listenerIsLocal) { // local listener's output is global - thus, the listening is global, meaning it is emitted by the environment
+            if(!this.parent) { return [local.convert("listening")]; } // if there is no parent, then the listening is global
             return this.parent.source.listen(local); // if there is a parent, then the listening is local
         }
         // else the listener is global, so the listening is local, meaning it is emitted by all listeners as local information
@@ -421,18 +463,16 @@ class Listener extends Environment {
             return a;
         });
         // iterate through the absorptions and emit the local listenings
-        const listenings = [], listenedAbs = [];
-        for (const absorption1 of listenedAbsorptions) {
-            for (const absorption2 of absorptions) {
-                if (absorption1 === absorption2) {
-                    continue;
-                }
+        const listenings: Listening[] = [], listenedAbs: any = []
+        for(const absorption1 of listenedAbsorptions) {
+            for(const absorption2 of absorptions) {
+                if(absorption1 === absorption2) { continue; }
                 const distance = absorption1.distanceTo(absorption2);
                 const direction = absorption1.directionTo(absorption2);
                 const force = this.information.quantumState() * absorption1.quantumState() * absorption2.quantumState() / distance;
                 const acceleration = force / absorption1.quantumState();
                 // if the absorption2 are colliding, then emit a local listening
-                if (distance < 1) {
+                if(distance < 1) {
                     absorption2.add(absorption1);
                     listenings.push(this._doListening(absorption2, absorption2.position, absorption2.radius));
                     listenedAbs.push(absorption2);
@@ -440,19 +480,19 @@ class Listener extends Environment {
             }
         }
         // remove the listened absorptions
-        for (const listenedAbsorption of listenedAbs) {
+        for(const listenedAbsorption of listenedAbs) {
             const index = absorptions.indexOf(listenedAbsorption);
             absorptions.splice(index, 1);
         }
         // emit the remaining absorptions as global listenings
-        for (const absorption of absorptions) {
+        for(const absorption of absorptions) {
             listenings.push(this._doListening(absorption, absorption.position, absorption.radius));
         }
         // return the listening
         return listenings;
     }
     // actually do the listening
-    _doListening(emission, position, velocity) {
+    _doListening(emission: LocalInformation, position: Vector3, velocity: Vector3): Listening {
         const listening = emission.convert("listening");
         listening.position = position;
         listening.velocity = velocity;
@@ -466,25 +506,26 @@ class Listener extends Environment {
         return clone;
     }
 }
-exports.Listener = Listener;
-class Listening extends LocalInformation {
-    constructor(parent, self, position, velocity) {
+
+ class Listening extends LocalInformation {
+    constructor(
+        public parent: LocalInformation | null, 
+        public self: LocalInformation, 
+        public position: Vector3, 
+        public velocity: Vector3
+        ) {
         super(parent, position, velocity);
-        this.parent = parent;
-        this.self = self;
-        this.position = position;
-        this.velocity = velocity;
         this.infoType = 'listening';
         this.infoValue = 0;
         this.source = self;
         // if the listener is local, then the listening is global. If the listener is global, then the listening is local.
         // if the listener is a dipole, then the listening is monopolar (for example: a speaker listens to sound, which is monopolar)
         // if the listener is a monopole, then the listening is dipolar (for example: a microphone listens to sound, which is dipolar)
-        if (this.parent) {
+        if(this.parent) {
             this.infoValue = self.quantumState();
         }
     }
-    add(listening) { this.infoValue += listening.infoValue; }
+    add(listening: Listening) { this.infoValue += listening.infoValue; }
     clone() {
         const clone = new Listening(this.parent, this.self, this.position, this.velocity);
         clone.parent = this.parent;
@@ -497,18 +538,19 @@ class Listening extends LocalInformation {
         return clone;
     }
 }
-exports.Listening = Listening;
-class Executive extends Environment {
-    constructor(parent, informations, information, alignment = new vector_1.Vector3(0, 0, 0)) {
-        super(parent, informations, information);
-        this.parent = parent;
-        this.informations = informations;
-        this.information = information;
-        this.alignment = alignment;
+
+ class Executive extends Environment {
+    constructor(
+        public parent: LocalInformation | null, 
+        public informations: LocalInformation[], 
+        public information: LocalInformation,
+        public alignment: Vector3 = new Vector3(0, 0, 0)
+        ) {
+        super(parent, informations, information); 
         this.information.infoType = 'executive';
-        this.alignment = new vector_1.Vector3(0, 0, 0);
+        this.alignment = new Vector3(0, 0, 0);
     }
-    execute(local) {
+    execute(local: Listening): Execution[] {
         // attract the local information to the executive and then execute it
         local.position = this.information.position;
         local.radius = this.information.radius;
@@ -516,10 +558,8 @@ class Executive extends Environment {
         local.visibleObjects = visibleObjects;
         // if the executive is local, then the execution is global. If the executive is global, then the execution is local.
         const executiveIsLocal = local.source !== undefined;
-        if (executiveIsLocal) { // local executive's output is global - thus, the execution is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.convert("execution")];
-            } // if there is no parent, then the execution is global
+        if(executiveIsLocal) { // local executive's output is global - thus, the execution is global, meaning it is emitted by the environment
+            if(!this.parent) { return [local.convert("execution")]; } // if there is no parent, then the execution is global
             return this.parent.source.execute(local); // if there is a parent, then the execution is local
         }
         // else the executive is global, so the execution is local, meaning it is emitted by all executives as local information
@@ -532,18 +572,16 @@ class Executive extends Environment {
             return l;
         });
         // iterate through the absorptions and emit the local listenings
-        const executions = [], absorbedLis = [];
-        for (const listening1 of absorbedListenings) {
-            for (const listening2 of listenings) {
-                if (listening1 === listening2) {
-                    continue;
-                }
+        const executions: Execution[] = [], absorbedLis: any = []
+        for(const listening1 of absorbedListenings) {
+            for(const listening2 of listenings) {
+                if(listening1 === listening2) { continue; }
                 const distance = listening1.distanceTo(listening2);
                 const direction = listening1.directionTo(listening2);
                 const force = this.information.quantumState() * listening1.quantumState() * listening2.quantumState() / distance;
                 const acceleration = force / listening1.quantumState();
                 // if the listening2 are colliding, then emit a local execution
-                if (distance < 1) {
+                if(distance < 1) {
                     listening2.add(listening1);
                     executions.push(this._doExecution(listening2, listening2.position, listening2.radius));
                     absorbedLis.push(listening2);
@@ -551,21 +589,19 @@ class Executive extends Environment {
             }
         }
         // remove the absorbed listenings
-        for (const absorbedLi of absorbedLis) {
+        for(const absorbedLi of absorbedLis) {
             const index = listenings.indexOf(absorbedLi);
-            if (index > -1) {
-                listenings.splice(index, 1);
-            }
+            if(index > -1) { listenings.splice(index, 1); }
         }
         // emit the remaining listenings as global executions
-        for (const listening of listenings) {
+        for(const listening of listenings) {
             executions.push(this._doExecution(listening, listening.position, listening.radius));
         }
         // return the execution
         return executions;
     }
     // actually do the execution
-    _doExecution(listening, position, velocity) {
+    _doExecution(listening: LocalInformation, position: Vector3, velocity: Vector3): Execution {
         const execution = listening.convert("execution");
         execution.position = position;
         execution.velocity = velocity;
@@ -579,24 +615,20 @@ class Executive extends Environment {
         return clone;
     }
 }
-exports.Executive = Executive;
-class Execution extends LocalInformation {
-    constructor(parent, self, position, velocity) {
+
+ class Execution extends LocalInformation {
+    constructor(public parent: LocalInformation | null, public self: LocalInformation, public position: Vector3, public velocity: Vector3) {
         super(parent, position, velocity);
-        this.parent = parent;
-        this.self = self;
-        this.position = position;
-        this.velocity = velocity;
         this.infoType = 'execution';
         this.infoValue = 0;
         // if the executive is local, then the execution is global. If the executive is global, then the execution is local.
         // if the executive is a dipole, then the execution is monopolar (for example: a speaker executes sound, which is monopolar)
         // if the executive is a monopole, then the execution is dipolar (for example: a microphone executes sound, which is dipolar)
-        if (this.parent) {
+        if(this.parent) {
             this.infoValue = self.quantumState();
         }
     }
-    add(execution) { this.infoValue += execution.infoValue; }
+    add(execution: Execution) { this.infoValue += execution.infoValue; }
     clone() {
         const clone = new Execution(this.parent, this.self, this.position, this.velocity);
         clone.parent = this.parent;
@@ -609,18 +641,18 @@ class Execution extends LocalInformation {
         return clone;
     }
 }
-exports.Execution = Execution;
-class Mediative extends Environment {
-    constructor(parent, informations, information, alignment = new vector_1.Vector3(0, 0, 0)) {
+
+ class Mediative extends Environment {
+    constructor(
+        public parent: LocalInformation | null, 
+        public informations: LocalInformation[],
+        public information: LocalInformation,
+        public alignment: Vector3 = new Vector3(0, 0, 0)) {
         super(parent, informations, information);
-        this.parent = parent;
-        this.informations = informations;
-        this.information = information;
-        this.alignment = alignment;
         this.information.infoType = 'mediative';
-        this.alignment = new vector_1.Vector3(0, 0, 0);
+        this.alignment = new Vector3(0, 0, 0);
     }
-    mediate(local) {
+    mediate(local: Execution): Mediation[] {
         // attract the local information to the mediative and then mediate it
         local.position = this.information.position;
         local.radius = this.information.radius;
@@ -628,10 +660,8 @@ class Mediative extends Environment {
         local.visibleObjects = visibleObjects;
         // if the mediative is local, then the mediation is global. If the mediative is global, then the mediation is local.
         const mediativeIsLocal = local.source !== undefined;
-        if (mediativeIsLocal) { // local mediative's output is global - thus, the mediation is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.convert("mediation")];
-            } // if there is no parent, then the mediation is global
+        if(mediativeIsLocal) { // local mediative's output is global - thus, the mediation is global, meaning it is emitted by the environment
+            if(!this.parent) { return [local.convert("mediation")]; } // if there is no parent, then the mediation is global
             return this.parent.source.mediate(local); // if there is a parent, then the mediation is local
         }
         // else the mediative is global, so the mediation is local, meaning it is emitted by all mediatives as local information
@@ -644,15 +674,13 @@ class Mediative extends Environment {
             return l;
         });
         // iterate through the absorptions and emit the local listenings
-        const mediations = [], absorbedLis = [];
-        for (const execution1 of absorbedExecutings) {
-            for (const execution2 of executings) {
-                if (execution1 === execution2) {
-                    continue;
-                }
+        const mediations: Mediation[] = [], absorbedLis:any = []
+        for(const execution1 of absorbedExecutings) {
+            for(const execution2 of executings) {
+                if(execution1 === execution2) { continue; }
                 const distance = execution1.distanceTo(execution2);
                 // if the execution2 are colliding, then emit a local listening
-                if (distance < 1) {
+                if(distance < 1) {
                     execution2.add(execution1);
                     mediations.push(this._doMediation(execution2, execution2.position, execution2.radius));
                     absorbedLis.push(execution2);
@@ -660,21 +688,19 @@ class Mediative extends Environment {
             }
         }
         // remove the absorbed listenings
-        for (const absorbedLi of absorbedLis) {
+        for(const absorbedLi of absorbedLis) {
             const index = executings.indexOf(absorbedLi);
-            if (index > -1) {
-                executings.splice(index, 1);
-            }
+            if(index > -1) { executings.splice(index, 1); }
         }
         // emit the remaining listenings as global executions
-        for (const execution of executings) {
+        for(const execution of executings) {
             mediations.push(this._doMediation(execution, execution.position, execution.radius));
         }
         // return the mediations
         return mediations;
     }
     // actually do the mediation
-    _doMediation(listening, position, velocity) {
+    _doMediation(listening: LocalInformation, position: Vector3, velocity: Vector3): Mediation {
         const mediation = listening.convert("mediation");
         mediation.position = position;
         mediation.velocity = velocity;
@@ -688,24 +714,18 @@ class Mediative extends Environment {
         return clone;
     }
 }
-exports.Mediative = Mediative;
-class Mediation extends LocalInformation {
-    constructor(parent, self, position, velocity) {
+
+ class Mediation extends LocalInformation {
+    constructor(public parent: LocalInformation | null, public self: LocalInformation, public position: Vector3, public velocity: Vector3) {
         super(parent, position, velocity);
-        this.parent = parent;
-        this.self = self;
-        this.position = position;
-        this.velocity = velocity;
         this.infoType = 'mediation';
         this.infoValue = 0;
         // if the mediative is local, then the mediation is global. If the mediative is global, then the mediation is local.
         // if the mediative is a dipole, then the mediation is monopolar (for example: a speaker mediates sound, which is monopolar)
         // if the mediative is a monopole, then the mediation is dipolar (for example: a microphone mediates sound, which is dipolar)
-        if (this.parent) {
-            this.infoValue = self.quantumState();
-        }
+        if(this.parent) { this.infoValue = self.quantumState(); }
     }
-    add(mediation) { this.infoValue += mediation.infoValue; }
+    add(mediation: Mediation) { this.infoValue += mediation.infoValue; }
     clone() {
         const clone = new Mediation(this.parent, this.self, this.position, this.velocity);
         clone.parent = this.parent;
@@ -718,19 +738,19 @@ class Mediation extends LocalInformation {
         return clone;
     }
 }
-exports.Mediation = Mediation;
+
 // an emitter is an environment that emits information. emissive, radiative, listener, mediative, executive are all types of emitters.
-class Emitter extends Environment {
-    constructor(parent, informations, information, alignment = new vector_1.Vector3(0, 0, 0)) {
+ class Emitter extends Environment {
+    constructor(
+        public parent: LocalInformation | null, 
+        public informations: LocalInformation[], 
+        public information: LocalInformation,
+        public alignment: Vector3 = new Vector3(0, 0, 0)) {
         super(parent, informations, information);
-        this.parent = parent;
-        this.informations = informations;
-        this.information = information;
-        this.alignment = alignment;
         this.information.infoType = 'emitter';
-        this.alignment = new vector_1.Vector3(0, 0, 0);
+        this.alignment = new Vector3(0, 0, 0);
     }
-    emit(local) {
+    emit(local: Mediation): Emission[] {
         // attract the local information to the emitter and then execute it
         local.position = this.information.position;
         local.radius = this.information.radius;
@@ -738,40 +758,37 @@ class Emitter extends Environment {
         local.visibleObjects = visibleObjects;
         // if the emitter is local, then the emission is global. If the emitter is global, then the emission is local.
         const emitterIsLocal = local.source !== undefined;
-        if (emitterIsLocal) { // local emitter's output is global - thus, the emission is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.convert("emission")];
-            } // if there is no parent, then the emission is global
+        if(emitterIsLocal) { // local emitter's output is global - thus, the emission is global, meaning it is emitted by the environment
+            if(!this.parent) { return [local.convert("emission")]; } // if there is no parent, then the emission is global
             return this.parent.source.emit(local); // if there is a parent, then the emission is local
         }
         // else the emitter is global, so the emission is local, meaning it is emitted by all emitters as local information
         // iterate through the visible objects and attract the appropriate information to the emitter
-        const emissions = [], absorbedEms = [];
-        for (const visibleObject of visibleObjects) {
+        const emissions: Emission[] = [], absorbedEms: any = []
+        for(const visibleObject of visibleObjects) {
             const distance = this.information.distanceTo(visibleObject);
-            if (distance < 1) {
+            if(distance < 1) {
                 visibleObject.add(this.information);
                 emissions.push(...this._doEmission(visibleObject.source, visibleObject.position, visibleObject.radius));
                 absorbedEms.push(visibleObject);
             }
         }
         // remove the absorbed emissions
-        for (const absorbedEm of absorbedEms) {
+        for(const absorbedEm of absorbedEms) {
             const index = visibleObjects.indexOf(absorbedEm);
-            if (index > -1) {
-                visibleObjects.splice(index, 1);
-            }
+            if(index > -1) { visibleObjects.splice(index, 1); }
         }
         // emit the remaining visible objects as local emissions
-        for (const visibleObject of visibleObjects) {
+        for(const visibleObject of visibleObjects) {
             emissions.push(...this._doEmission(visibleObject.source, visibleObject.position, visibleObject.radius));
         }
         // return the emission
         return emissions;
     }
-    _doEmission(emission, position, velocity) {
+
+    _doEmission(emission: Emission, position: Vector3, velocity: Vector3): Emission[] {
         // get the local information
-        const e = this.getLocalInformation(position, velocity);
+        const e = this.getLocalInformation(position, velocity)
         e.parent = emission.parent;
         e.position = emission.position;
         e.radius = emission.radius;
@@ -781,23 +798,21 @@ class Emitter extends Environment {
         e.visibleObjects = emission.visibleObjects;
         // if the emission is local, then the emission is global. If the emission is global, then the emission is local.
         const emissionIsLocal = emission.parent !== null && emission.parent.source !== undefined;
-        if (emissionIsLocal) { // local emission's output is global - thus, the emission is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return e.source;
-            } // if there is no parent, then the emission is global
+        if(emissionIsLocal) { // local emission's output is global - thus, the emission is global, meaning it is emitted by the environment
+            if(!this.parent) { return e.source; } // if there is no parent, then the emission is global
             return this.parent.source.emit(e.source); // if there is a parent, then the emission is local
         }
         // else the emission is global, so the emission is local, meaning it is emitted by all emitters as local information
         // iterate through the visible objects and attract the appropriate information to the emitter
-        const visibleObjects = emission.visibleObjects, emissions = [], absorbedEms = [];
-        for (const visibleObject of visibleObjects) {
-            if (visibleObject.infoType === 'emission') {
+        const visibleObjects = emission.visibleObjects, emissions: Emission[] = [], absorbedEms: any = []
+        for(const visibleObject of visibleObjects) {
+            if(visibleObject.infoType === 'emission') {
                 const distance = e.distanceTo(visibleObject);
                 const direction = e.directionTo(visibleObject);
                 const force = e.quantumState() * visibleObject.quantumState() / distance;
                 const acceleration = force / e.quantumState();
                 // if the visibleObject are colliding, then emit a local emission
-                if (distance < 1) {
+                if(distance < 1) {
                     visibleObject.add(e);
                     emissions.push(...this._doEmission(visibleObject.source, visibleObject.position, visibleObject.radius));
                     absorbedEms.push(visibleObject);
@@ -805,21 +820,20 @@ class Emitter extends Environment {
             }
         }
         // remove the absorbed emissions
-        for (const absorbedEm of absorbedEms) {
+        for(const absorbedEm of absorbedEms) {
             const index = visibleObjects.indexOf(absorbedEm);
-            if (index > -1) {
-                visibleObjects.splice(index, 1);
-            }
+            if(index > -1) { visibleObjects.splice(index, 1); }
         }
         // emit the remaining visible objects as local emissions
-        for (const visibleObject of visibleObjects) {
+        for(const visibleObject of visibleObjects) {
             emissions.push(...this._doEmission(visibleObject.source, visibleObject.position, visibleObject.radius));
         }
         // return the emission
         return emissions;
     }
-    _doMediation(mediation, position, velocity) {
-        const m = this.getLocalInformation(position, velocity);
+
+    _doMediation(mediation: Mediation, position: Vector3, velocity: Vector3): Mediation {
+        const m = this.getLocalInformation(position, velocity)
         m.parent = mediation.parent;
         m.position = mediation.position;
         m.radius = mediation.radius;
@@ -829,22 +843,22 @@ class Emitter extends Environment {
         m.visibleObjects = mediation.visibleObjects;
         // if the mediation is local, then the mediation is global. If the mediation is global, then the mediation is local.
         const mediationIsLocal = mediation.parent !== null && mediation.parent.source !== undefined;
-        if (mediationIsLocal) { // local mediation's output is global - thus, the mediation is global, meaning it is emitted by the environment
-            if (!this.parent) {
+        if(mediationIsLocal) { // local mediation's output is global - thus, the mediation is global, meaning it is emitted by the environment
+            if(!this.parent) {
                 return m.source; // if there is no parent, then the mediation is global
             } // if there is no parent, then the mediation is global
         }
         // else the mediation is global, so the mediation is local, meaning it is emitted by all emitters as local information
         // iterate through the visible objects and attract the appropriate information to the emitter
         const visibleObjects = mediation.visibleObjects;
-        for (const visibleObject of visibleObjects) {
-            if (visibleObject.infoType === 'mediation') {
+        for(const visibleObject of visibleObjects) {
+            if(visibleObject.infoType === 'mediation') {
                 const distance = this.information.position.distanceTo(visibleObject.position);
                 const direction = this.information.position.directionTo(visibleObject.position);
                 const force = this.information.quantumState() * visibleObject.quantumState() / distance;
                 const acceleration = force / this.information.quantumState();
                 // if the mediation is colliding, then emit a local mediation
-                if (distance < 1) {
+                if(distance < 1) {
                     this.information.add(visibleObject);
                     this.mediate(this._doMediation(visibleObject.source, this.information.position, this.information.radius));
                 }
@@ -853,24 +867,23 @@ class Emitter extends Environment {
         // return the mediation
         return m.convert("mediation");
     }
-    listen(local) {
+
+    listen(local: LocalInformation): Listening[] {
         // if the emitter is local, then the emission is global. If the emitter is global, then the emission is local.
         const emitterIsLocal = local !== null && local.source !== undefined;
-        if (emitterIsLocal) { // local emitter's output is global - thus, the emission is global, meaning it is emitted by the environment
-            if (!this.parent) {
-                return [local.source];
-            } // if there is no parent, then the emission is global
+        if(emitterIsLocal) { // local emitter's output is global - thus, the emission is global, meaning it is emitted by the environment
+            if(!this.parent) { return [ local.source ]; } // if there is no parent, then the emission is global
             return this.parent.source.listen(local.source); // if there is a parent, then the emission is local
         }
         // else the emitter is global, so the emission is local, meaning it is emitted by all emitters as local information
         // iterate through the visible objects and attract the appropriate information to the emitter
-        const mediations = [], absorbedMediations = [];
-        for (const visibleObject of this.getVisibleObjects(local, local.position, local.radius)) {
-            if (visibleObject.infoType === 'mediation') {
+        const mediations: Mediation[] = [], absorbedMediations: any = [];
+        for(const visibleObject of this.getVisibleObjects(local, local.position, local.radius)) {
+            if(visibleObject.infoType === 'mediation') {
                 const mediation = visibleObject.clone();
                 const distance = this.information.position.distanceTo(mediation.position);
                 // if the mediation is colliding, then emit a local mediation
-                if (distance < 1) {
+                if(distance < 1) {
                     this.information.add(mediation);
                     mediations.push(this._doMediation(mediation.source, this.information.position, this.information.radius));
                     absorbedMediations.push(mediation);
@@ -878,10 +891,18 @@ class Emitter extends Environment {
             }
         }
         // remove the absorbed mediations
-        for (const absorbedMediation of absorbedMediations) {
-            const visibleObjects = this.getVisibleObjects(local, local.position, local.radius);
-            const index = this.getVisibleObjects(local, local.position, local.radius).indexOf(absorbedMediation);
-            if (index > -1) {
+        for(const absorbedMediation of absorbedMediations) {
+            const visibleObjects = this.getVisibleObjects(
+                local,
+                local.position,
+                local.radius
+            );
+            const index = this.getVisibleObjects(
+                local,
+                local.position,
+                local.radius
+            ).indexOf(absorbedMediation);
+            if(index > -1) {
                 visibleObjects.splice(index, 1);
             }
         }
@@ -889,23 +910,17 @@ class Emitter extends Environment {
         return mediations;
     }
 }
-exports.Emitter = Emitter;
-class Emission extends LocalInformation {
-    constructor(parent, self, position, velocity) {
+
+ class Emission extends LocalInformation {
+    constructor(public parent: LocalInformation | null, public self: LocalInformation, public position: Vector3, public velocity: Vector3) {
         super(parent, position, velocity);
-        this.parent = parent;
-        this.self = self;
-        this.position = position;
-        this.velocity = velocity;
         this.infoType = 'emission';
         this.infoValue = 0;
         // if the executive is a dipole, then the execution is monopolar (for example: a speaker executes sound, which is monopolar)
         // if the executive is a monopole, then the execution is dipolar (for example: a microphone executes sound, which is dipolar)
-        if (this.parent) {
-            this.infoValue = self.quantumState();
-        }
+        if(this.parent) { this.infoValue = self.quantumState(); }
     }
-    add(emission) { this.infoValue += emission.infoValue; }
+    add(emission: Emission) { this.infoValue += emission.infoValue; }
     clone() {
         const clone = new Emission(this.parent, this.self, this.position, this.velocity);
         clone.parent = this.parent;
@@ -918,7 +933,7 @@ class Emission extends LocalInformation {
         return clone;
     }
 }
-exports.Emission = Emission;
+
 /*
 # Representing Multipoles
 Multipole shorthand treats each of the vector3s as a binay numerical representation, concatenating all five values together into a single number. For example:
@@ -930,38 +945,37 @@ This shorthand allows for easy representation of multipoles and their orientatio
 | (1, 0, 0) | (1, 0, 1) | (0, 1, 0) | (0, 0, 1) | (1, 1, 0) | 1011010100110 | 5798 | 0x16a6 |
 | (1, 0, 0) | (1, 0, 1) | (0, 1, 0) | (0, 0, 1) | (1, 1, 1) | 1011010100111 | 5799 | 0x16a7 |
  */
-class Pole extends Environment {
-    constructor(parent, localInformation, polarConfiguration) {
+ class Pole extends Environment {
+    poleType: string;
+    constructor(public parent: LocalInformation, public localInformation: LocalInformation, polarConfiguration: number) {
         super(parent, [], localInformation);
-        this.parent = parent;
-        this.localInformation = localInformation;
         this.poleType = 'pole';
         // decompose polar configuration into binary
         const binary = polarConfiguration.toString(2);
         // extract the binary values as vector3s
-        const absorber = new vector_1.Vector3(parseInt(binary[0]), parseInt(binary[1]), parseInt(binary[2]));
-        const listener = new vector_1.Vector3(parseInt(binary[3]), parseInt(binary[4]), parseInt(binary[5]));
-        const executor = new vector_1.Vector3(parseInt(binary[6]), parseInt(binary[7]), parseInt(binary[8]));
-        const mediator = new vector_1.Vector3(parseInt(binary[9]), parseInt(binary[10]), parseInt(binary[11]));
-        const emitter = new vector_1.Vector3(parseInt(binary[12]), parseInt(binary[13]), parseInt(binary[14]));
+        const absorber = new Vector3(parseInt(binary[0]), parseInt(binary[1]), parseInt(binary[2]));
+        const listener = new Vector3(parseInt(binary[3]), parseInt(binary[4]), parseInt(binary[5]));
+        const executor = new Vector3(parseInt(binary[6]), parseInt(binary[7]), parseInt(binary[8]));
+        const mediator = new Vector3(parseInt(binary[9]), parseInt(binary[10]), parseInt(binary[11]));
+        const emitter = new Vector3(parseInt(binary[12]), parseInt(binary[13]), parseInt(binary[14]));
         this.absorber = new Absorber(parent, [], this.getGlobalInformation(), absorber);
         this.listener = new Listener(parent, [], this.getGlobalInformation(), listener);
         this.executor = new Executive(parent, [], this.getGlobalInformation(), executor);
         this.mediator = new Mediative(parent, [], this.getGlobalInformation(), mediator);
         this.emitter = new Emitter(parent, [], this.getGlobalInformation(), emitter);
     }
-    static createPoles(parent, localInformations, polarConfigurations) {
-        const poles = [];
-        for (const polarConfiguration of polarConfigurations) {
+    static createPoles(parent: LocalInformation, localInformations: LocalInformation, polarConfigurations: number[]) {
+        const poles: any = [];
+        for(const polarConfiguration of polarConfigurations) {
             poles.push(new Pole(parent, localInformations, polarConfiguration));
         }
         return poles;
     }
-    createRandomPoles(parent, localInformations, maxPoles) {
-        const poles = [];
-        for (let i = 0; i < maxPoles; i++) {
+    static createRandomPoles(parent: LocalInformation, localInformations: LocalInformation, maxPoles: number) {
+        const poles: any = [];
+        for(let i = 0; i < maxPoles; i++) {
             // get a random binary string 12 characters long
-            const rrnd = ~~(Math.random() * 1000000000000);
+            const rrnd = ~~( Math.random() * 1000000000000 );
             const randomBinaryString = rrnd.toString(2);
             // convert the binary string to a number
             const polarConfiguration = parseInt(randomBinaryString);
@@ -970,26 +984,24 @@ class Pole extends Environment {
         return poles;
     }
 }
-exports.Pole = Pole;
-class Dipole extends Pole {
-    constructor(parent, localInformation, polarConfiguration) {
+
+ class Dipole extends Pole {
+    constructor(public parent: LocalInformation, public localInformation: LocalInformation, polarConfiguration: number) {
         super(parent, localInformation, polarConfiguration);
-        this.parent = parent;
-        this.localInformation = localInformation;
         this.poleType = 'dipole';
     }
-    static createDipoles(parent, localInformations, polarConfigurations) {
-        const dipoles = [];
-        for (const polarConfiguration of polarConfigurations) {
+    static createDipoles(parent: LocalInformation, localInformations: LocalInformation, polarConfigurations: number[]) {
+        const dipoles : any= [];
+        for(const polarConfiguration of polarConfigurations) {
             dipoles.push(new Dipole(parent, localInformations, polarConfiguration));
         }
         return dipoles;
     }
-    createRandomDipoles(parent, localInformations, maxDipoles) {
-        const dipoles = [];
-        for (let i = 0; i < maxDipoles; i++) {
+    createRandomDipoles(parent: LocalInformation, localInformations: LocalInformation, maxDipoles: number) {
+        const dipoles: any = [];
+        for(let i = 0; i < maxDipoles; i++) {
             // get a random binary string 15 characters long
-            const rrnd = ~~(Math.random() * 100000000000000);
+            const rrnd = ~~( Math.random() * 100000000000000 );
             const randomBinaryString = rrnd.toString(2);
             // convert the binary string to a number
             const polarConfiguration = parseInt(randomBinaryString);
@@ -998,53 +1010,46 @@ class Dipole extends Pole {
         return dipoles;
     }
 }
-exports.Dipole = Dipole;
-function randomDipoles(environment, maxX, maxY, maxZ, randomVal) {
+
+ function randomDipoles(environment: Environment, maxX: number, maxY: number, maxZ: number, randomVal: number) {
     // add several local informations
-    for (let x = 0; x < maxX; x++) {
+    for(let x = 0; x < maxX; x++) {
         // add local informations to the dipole
-        for (let y = 0; y < maxY; y++) {
-            for (let z = 0; z < maxZ; z++) {
-                if (Math.random() > randomVal) {
-                    continue;
-                }
+        for(let y = 0; y < maxY; y++) {
+            for(let z = 0; z < maxZ; z++) {
+                if(Math.random() > randomVal) {  continue }
                 // add  a random dipole
-                const localInformation = new LocalInformation(environment.getLocalInformation(new vector_1.Vector3(x, y, z), new vector_1.Vector3(0, 0, 0)), new vector_1.Vector3(x, y, z), new vector_1.Vector3(0, 0, 0));
-                const rrnd = ~~(Math.random() * 100000000000000);
+                const localInformation = new LocalInformation(environment.getLocalInformation(
+                    new Vector3(x, y, z), new Vector3(0, 0, 0)
+                ), new Vector3(x, y, z), new Vector3(0, 0, 0));
+                const rrnd = ~~( Math.random() * 100000000000000 );
                 const randomBinaryString = rrnd.toString(2);
                 const polarConfiguration = parseInt(randomBinaryString);
                 const dipole = new Dipole(localInformation, localInformation, polarConfiguration);
-                environment.addPole(dipole, new vector_1.Vector3(x, y, z), new vector_1.Vector3(0, 0, 0));
+                environment.addPole(dipole, new Vector3(x, y, z), new Vector3(0, 0, 0));
             }
         }
     }
 }
-exports.randomDipoles = randomDipoles;
-class EnvironmentRenderer {
-    constructor(canvas, environment, position, radius) {
-        this.canvas = canvas;
-        this.environment = environment;
-        this.position = position;
-        this.radius = radius;
+
+ class EnvironmentRenderer {
+    constructor(public canvas: any, public environment: Environment, public position: Vector3, public radius: Vector3) {
         // render the environment onto the canvas from the position and velocity and looking in the direction of
         // reposition the canvas origin to the canvas center
         canvas.getContext('2d').translate(canvas.width / 2, canvas.height / 2);
     }
     // raycast the environment from the position looking in the direction of. The radius is the distance from the
-    render(position, direction) {
+    render(position: Vector3, direction: Vector3) {
         // clear the canvas
         this.canvas.getContext('2d').clearRect(-this.canvas.width / 2, -this.canvas.height / 2, this.canvas.width, this.canvas.height);
         // render the environment
         this.environment.render(this.canvas, position, direction);
     }
 }
-exports.EnvironmentRenderer = EnvironmentRenderer;
-class FieldLine {
-    constructor(position, localInformationPosition) {
-        this.position = position;
-        this.localInformationPosition = localInformationPosition;
-    }
-    render(canvas) {
+
+ class FieldLine {
+    constructor(public position: Vector3, public localInformationPosition: Vector3) {}
+    render(canvas: any) {
         const context = canvas.getContext('2d');
         context.beginPath();
         context.moveTo(this.position.x, this.position.y);
@@ -1052,4 +1057,35 @@ class FieldLine {
         context.stroke();
     }
 }
-exports.FieldLine = FieldLine;
+
+const env = new Environment(
+    null, 
+    [], 
+    new LocalInformation(
+        null, 
+        Vector3.r(5),
+        new Vector3(0, 0, 0)
+    )
+);
+
+const randomPoles = Pole.createRandomPoles(
+    env.getGlobalInformation(),
+    new LocalInformation(
+        null, 
+        Vector3.r(5),
+        new Vector3(0, 0, 0)
+    ),  2
+);
+
+const canvas = document.getElementById('canvas');
+if(canvas) { 
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+const renderer = new EnvironmentRenderer(canvas, env, new Vector3(-10, 0, 0), new Vector3(0, 0, 0));
+const loop = () => {
+  renderer.render(new Vector3(-10, 0, 0), new Vector3(0, 0, 0));
+  requestAnimationFrame(loop);
+};
+loop();

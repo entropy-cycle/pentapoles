@@ -18,6 +18,7 @@ export declare class Vector2 {
     normalize(): Vector2;
     normal(): Vector2;
     clone(): Vector2;
+    equals(v: Vector2): boolean;
     toString(): string;
     static random(vecMin: Vector2, vecMax: Vector2): Vector2;
     static r(num: number): Vector2;
@@ -44,6 +45,7 @@ export declare class Vector3 {
     normalize(): Vector3;
     normal(): Vector3;
     clone(): Vector3;
+    equals(v: Vector3): boolean;
     projectTo2d(camera: Vector3, screen: Vector2, rotation?: Vector3, scale?: number): Vector2;
     toString(): string;
     static random(vecMin: Vector3, vecMax: Vector3): Vector3;

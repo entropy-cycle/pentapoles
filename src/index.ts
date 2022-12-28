@@ -3,14 +3,17 @@ import { Vector2, Vector3 } from './vector';
 export { Vector2, Vector3 };
 
 export class Environment {
-    absorber: Absorber;
-    listener: Listener;
-    executor: Executive
-    mediator: Mediative
-    emitter: Emitter;
+    absorber: any;
+    listener: any;
+    executor: any
+    mediator: any
+    emitter: any;
     _children: Environment[] = [];
     children(): Environment[] { return this._children; }
     constructor(public parent: LocalInformation | null, localInformations: LocalInformation[] = [], public globalInformation: LocalInformation) {
+        this.initEnvironment(parent, localInformations, globalInformation);
+    }
+    async initEnvironment(parent: LocalInformation | null, localInformations: LocalInformation[] = [], globalInformation: LocalInformation): Promise<void> {
         if(parent) { parent.source.children().push(this); }        
         this.absorber = new Absorber(parent, localInformations, globalInformation);
         this.listener = new Listener(parent, localInformations, globalInformation);
@@ -30,7 +33,7 @@ export class Environment {
     observeLocalInformation(position: Vector3, radius: Vector3): LocalInformation { // gets the local information from the point of view of the environment, affecting the environment
         const compressedInfo = this.compress(position, radius);
         const absorptions = this.absorber.absorb(compressedInfo.convert("emission"));
-        const listenings: any = absorptions.forEach(absorption => this.listener.listen(absorption));
+        const listenings: any = absorptions.forEach((absorption: any) => this.listener.listen(absorption));
         const listFlat = listenings.reduce((a: any, b: any) => a.concat(b), []);
         const executions: any = listFlat.forEach((listening:any) => this.executor.execute(listening));
         const execFlat = executions.reduce((a: any, b: any) => a.concat(b), []);

@@ -3,11 +3,43 @@
 <head>
     <script src="../dist/src/"></script>
 </head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    canvas {
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
 <body>
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <canvas id="canvas"></canvas>
     <script>
-        // Create a new instance of the pentapoles environment
-        
+        const canvas = document.getElementById('canvas');
+        const env = new Environment(
+            null, 
+            [], 
+            new LocalInformation(
+                null, 
+                Vector3.r(5),
+                new Vector3(0, 0, 0)
+            )
+        );
+        const randomPoles = Pole.createRandomPoles(
+            env.getGlobalInformation(),
+            new LocalInformation(
+                null, 
+                Vector3.r(5),
+                new Vector3(0, 0, 0)
+            ),  [],   1
+        );
+        const renderer = new EnvironmentRenderer(canvas, env, new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+        const loop = () => {
+            renderer.render();
+            requestAnimationFrame(loop);
+        };
+        loop();
     </script>
 </body>
 </html>
