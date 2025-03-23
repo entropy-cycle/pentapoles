@@ -38,8 +38,12 @@ export class Environment extends EnvironmentBase {
 
     public roles: EnvironmentalRole[] = [];
 
+    // Private backing field for locale information
+    private _localeInformation: Information[] = [];
+    
     get localeInformation(): Information[] {
-        return this.information.localeInformation;
+        // This is a read-only property that needs a backing field
+        return this._localeInformation;
     }
 
     public observe(position: Vector3, radius: Vector3): Information[] {
@@ -72,13 +76,38 @@ export class Environment extends EnvironmentBase {
         }
 
         // Update the environment
-        this.update();
+        this.updateEnvironment();
 
         // Advance the state of the environment
-        this.advanceState();
+        this.advanceEnvironmentState();
 
         // Emit information from the environment
-        this.emit();
+        this.emitInformation();
+    }
+
+    // Update the environment state
+    private updateEnvironment(): void {
+        // Implementation of environment update logic
+        if (this.information) {
+            this.information.quantizeState();
+        }
+    }
+
+    // Advance the state of the environment
+    private advanceEnvironmentState(): void {
+        // Implementation of state advancement logic
+        if (this.information) {
+            this.information.advanceState();
+        }
+    }
+
+    // Emit information from the environment
+    private emitInformation(): void {
+        // Implementation of information emission logic
+        // Emit an event with the current state
+        if (this.information) {
+            this.emit('stateChanged', this.information);
+        }
     }
 
     public reset(): void {
@@ -89,26 +118,27 @@ export class Environment extends EnvironmentBase {
         }
         // Reset the environment
         this.clearQueue();
-        this.localeInformation = [];
+        this._localeInformation = []; // Use the backing field instead of the getter
     }
 
-    public visibleObjects(ray: Ray): any[] {
+    public visibleObjects(ray: Ray): Information[] {
         const parent = this.parent as Environment;
         if (!parent.isPhysical) {
             log("The environment is not physical and cannot be observed.");
             return [];
         }
-        let visibleObjects: any[] = [];
-        for (let i = 0; i < this.localeInformation.length; i++) {
-            let info = this.localeInformation[i];
-            if (ray.intersects(info.position)) {
-                visibleObjects.push(info.object);
+        let visibleObjects: Information[] = [];
+        for (let i = 0; i < this._localeInformation.length; i++) {
+            let info = this._localeInformation[i];
+            // Use intersectsSphere instead of intersects
+            if (ray.intersectsSphere(ray, info.radius ? info.radius.x : 1)) {
+                visibleObjects.push(info);
             }
         }
         return visibleObjects;
     }
 
-    public updateLocaleInformation(info: LocaleInformation): void {
+    public updateLocaleInformation(info: Information): void {
         const parent = this.parent as Environment;
         if (!parent.isPhysical) {
             log("The environment is not physical and cannot be updated.");
@@ -116,15 +146,15 @@ export class Environment extends EnvironmentBase {
         }
         // Check if the information already exists in the localeInformation array
         let exists = false;
-        for (let i = 0; i < this.localeInformation.length; i++) {
-            if (info.position.equals(this.localeInformation[i].position)) {
+        for (let i = 0; i < this._localeInformation.length; i++) {
+            if (info.position.equals(this._localeInformation[i].position)) {
                 exists = true;
                 break;
             }
         }
         // If the information doesn't exist, add it to the array
         if (!exists) {
-            this.localeInformation.push(info);
+            this._localeInformation.push(info);
         }
     }
 
@@ -136,15 +166,15 @@ export class Environment extends EnvironmentBase {
         }
         // Find the information with the specified position
         let index = -1;
-        for (let i = 0; i < this.localeInformation.length; i++) {
-            if (position.equals(this.localeInformation[i].position)) {
+        for (let i = 0; i < this._localeInformation.length; i++) {
+            if (position.equals(this._localeInformation[i].position)) {
                 index = i;
                 break;
             }
         }
         // If the information is found, remove it from the array
         if (index > -1) {
-            this.localeInformation.splice(index, 1);
+            this._localeInformation.splice(index, 1);
         }
     }
     public toString(): string {

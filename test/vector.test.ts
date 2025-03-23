@@ -1,14 +1,12 @@
-// test coverage for vector.ts - covers the Vector2 and Vector3 classes. Uses mocha and chai for testing. test coverage written in typescript.
+// test coverage for vector.ts - covers the Vector2 and Vector3 classes. Tests written in typescript using Jest.
 import { Vector2, Vector3 } from '../src/vector';
-import { expect } from 'chai';
-import 'mocha';
 
 describe('Vector2', () => {
     describe('constructor', () => {
         it('should create a new Vector2 with the given x and y values', () => {
             const v = new Vector2(1, 2);
-            expect(v.x).to.equal(1);
-            expect(v.y).to.equal(2);
+            expect(v.x).toBe(1);
+            expect(v.y).toBe(2);
         });
     });
     describe('add', () => {
@@ -16,8 +14,8 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const v3 = v.add(v2);
-            expect(v3.x).to.equal(4);
-            expect(v3.y).to.equal(6);
+            expect(v3.x).toBe(4);
+            expect(v3.y).toBe(6);
         });
     });
     describe('sub', () => {
@@ -25,8 +23,8 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const v3 = v.sub(v2);
-            expect(v3.x).to.equal(-2);
-            expect(v3.y).to.equal(-2);
+            expect(v3.x).toBe(-2);
+            expect(v3.y).toBe(-2);
         });
     });
     describe('multiply', () => {
@@ -34,8 +32,8 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const v3 = v.multiply(v2);
-            expect(v3.x).to.equal(3);
-            expect(v3.y).to.equal(8);
+            expect(v3.x).toBe(3);
+            expect(v3.y).toBe(8);
         });
     });
     describe('divide', () => {
@@ -43,8 +41,8 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const v3 = v.divide(v2);
-            expect(v3.x).to.equal(1 / 3);
-            expect(v3.y).to.equal(0.5);
+            expect(v3.x).toBe(1 / 3);
+            expect(v3.y).toBe(0.5);
         });
     });
     describe('dot', () => {
@@ -52,30 +50,30 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const dot = v.dot(v2);
-            expect(dot).to.equal(11);
+            expect(dot).toBe(11);
         });
     });
     describe('multiplyScalar', () => {
         it('should multiply the current vector by the given scalar', () => {
             const v = new Vector2(1, 2);
             const v2 = v.multiplyScalar(3);
-            expect(v2.x).to.equal(3);
-            expect(v2.y).to.equal(6);
+            expect(v2.x).toBe(3);
+            expect(v2.y).toBe(6);
         });
     });
     describe('divideScalar', () => {
         it('should divide the current vector by the given scalar', () => {
             const v = new Vector2(1, 2);
             const v2 = v.divideScalar(3);
-            expect(v2.x).to.equal(1 / 3);
-            expect(v2.y).to.equal(2 / 3);
+            expect(v2.x).toBe(1 / 3);
+            expect(v2.y).toBe(2 / 3);
         });
     });
     describe('length', () => {
         it('should return the length of the current vector', () => {
             const v = new Vector2(3, 4);
             const len = v.length();
-            expect(len).to.equal(5);
+            expect(len).toBe(5);
         });
     });
     describe('distanceTo', () => {
@@ -83,7 +81,7 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const distance = v.distanceTo(v2);
-            expect(distance).to.equal(2 * Math.sqrt(2));
+            expect(distance).toBe(2 * Math.sqrt(2));
         });
     });
     describe('directionTo', () => {
@@ -91,8 +89,8 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const v3 = v.directionTo(v2);
-            expect(v3.x).to.equal(1 / Math.sqrt(2));
-            expect(v3.y).to.equal(1 / Math.sqrt(2));
+            expect(v3.x).toBe(1 / Math.sqrt(2));
+            expect(v3.y).toBe(1 / Math.sqrt(2));
         });
     });
     describe('angleTo', () => {
@@ -100,37 +98,37 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const angle = v.angleTo(v2);
-            expect(angle).to.equal(1 - Math.PI / 4);
+            expect(angle).toBe(1 - Math.PI / 4);
         });
     });
     describe('normalize', () => {
         it('should return the normalized vector of the current vector', () => {
             const v = new Vector2(1, 2);
             const v2 = v.normalize();
-            expect(v2.x).to.equal(1 / Math.sqrt(5));
-            expect(v2.y).to.equal(2 / Math.sqrt(5));
+            expect(v2.x).toBe(1 / Math.sqrt(5));
+            expect(v2.y).toBe(2 / Math.sqrt(5));
         });
     });
     describe('normal', () => {
         it('should return the normal vector of the current vector', () => {
             const v = new Vector2(1, 2);
             const v2 = v.normal();
-            expect(v2.x).to.equal(1 / Math.sqrt(5));
+            expect(v2.x).toBe(1 / Math.sqrt(5));
         });
     });
     describe('clone', () => {
         it('should return a clone of the current vector', () => {
             const v = new Vector2(1, 2);
             const v2 = v.clone();
-            expect(v2.x).to.equal(v.x);
-            expect(v2.y).to.equal(v.y);
+            expect(v2.x).toBe(v.x);
+            expect(v2.y).toBe(v.y);
         });
     });
     describe('toString', () => {
         it('should return the string representation of the current vector', () => {
             const v = new Vector2(1, 2);
             const str = v.toString();
-            expect(str).to.equal('(1,2)');
+            expect(str).toBe('(1,2)');
         });
     });
 })
@@ -141,9 +139,9 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const v3 = v.add(v2);
-            expect(v3.x).to.equal(4);
-            expect(v3.y).to.equal(6);
-            expect(v3.z).to.equal(8);
+            expect(v3.x).toBe(4);
+            expect(v3.y).toBe(6);
+            expect(v3.z).toBe(8);
         });
     });
     describe('sub', () => {
@@ -151,9 +149,9 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const v3 = v.sub(v2);
-            expect(v3.x).to.equal(-2);
-            expect(v3.y).to.equal(-2);
-            expect(v3.z).to.equal(-2);
+            expect(v3.x).toBe(-2);
+            expect(v3.y).toBe(-2);
+            expect(v3.z).toBe(-2);
         });
     });
     describe('multiply', () => {
@@ -161,9 +159,9 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const v3 = v.multiply(v2);
-            expect(v3.x).to.equal(3);
-            expect(v3.y).to.equal(8);
-            expect(v3.z).to.equal(15);
+            expect(v3.x).toBe(3);
+            expect(v3.y).toBe(8);
+            expect(v3.z).toBe(15);
         });
     });
     describe('divide', () => {
@@ -171,9 +169,9 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const v3 = v.divide(v2);
-            expect(v3.x).to.equal(1 / 3);
-            expect(v3.y).to.equal(1 / 2);
-            expect(v3.z).to.equal(3 / 5);
+            expect(v3.x).toBe(1 / 3);
+            expect(v3.y).toBe(1 / 2);
+            expect(v3.z).toBe(3 / 5);
         });
     });
     describe('dot', () => {
@@ -181,32 +179,32 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const dot = v.dot(v2);
-            expect(dot).to.equal(26);
+            expect(dot).toBe(26);
         });
     });
     describe('multiplyScalar', () => {
         it('should return the product of the current vector and the given scalar', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = v.multiplyScalar(2);
-            expect(v2.x).to.equal(2);
-            expect(v2.y).to.equal(4);
-            expect(v2.z).to.equal(6);
+            expect(v2.x).toBe(2);
+            expect(v2.y).toBe(4);
+            expect(v2.z).toBe(6);
         });
     });
     describe('divideScalar', () => {
         it('should return the quotient of the current vector and the given scalar', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = v.divideScalar(2);
-            expect(v2.x).to.equal(1 / 2);
-            expect(v2.y).to.equal(2 / 2);
-            expect(v2.z).to.equal(3 / 2);
+            expect(v2.x).toBe(1 / 2);
+            expect(v2.y).toBe(2 / 2);
+            expect(v2.z).toBe(3 / 2);
         });
     });
     describe('length', () => {
         it('should return the length of the current vector', () => {
             const v = new Vector3(1, 2, 3);
             const length = v.length();
-            expect(length).to.equal(Math.sqrt(14));
+            expect(length).toBe(Math.sqrt(14));
         });
     });
     describe('distanceTo', () => {
@@ -214,7 +212,7 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const distance = v.distanceTo(v2);
-            expect(distance).to.equal(Math.sqrt(12));
+            expect(distance).toBe(Math.sqrt(12));
         });
     });
     describe('directionTo', () => {
@@ -222,7 +220,7 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const direction = v.directionTo(v2);
-            expect(direction.x).to.equal(2 / Math.sqrt(12));
+            expect(direction.x).toBe(2 / Math.sqrt(12));
         });
     });
     describe('angleTo', () => {
@@ -230,34 +228,34 @@ describe('Vector3', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = new Vector3(3, 4, 5);
             const angle = v.angleTo(v2);
-            expect(angle).to.equal(Math.acos(26 / (Math.sqrt(14) * Math.sqrt(50))));
+            expect(angle).toBe(Math.acos(26 / (Math.sqrt(14) * Math.sqrt(50))));
         });
     });
     describe('normalize', () => {
         it('should return the current vector normalized', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = v.normalize();
-            expect(v2.x).to.equal(1 / Math.sqrt(14));
-            expect(v2.y).to.equal(2 / Math.sqrt(14));
-            expect(v2.z).to.equal(3 / Math.sqrt(14));
+            expect(v2.x).toBe(1 / Math.sqrt(14));
+            expect(v2.y).toBe(2 / Math.sqrt(14));
+            expect(v2.z).toBe(3 / Math.sqrt(14));
         });
     });
     describe('normal', () => {
         it('should return the current vector normalized', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = v.normal();
-            expect(v2.x).to.equal(1 / Math.sqrt(14));
-            expect(v2.y).to.equal(2 / Math.sqrt(14));
-            expect(v2.z).to.equal(3 / Math.sqrt(14));
+            expect(v2.x).toBe(1 / Math.sqrt(14));
+            expect(v2.y).toBe(2 / Math.sqrt(14));
+            expect(v2.z).toBe(3 / Math.sqrt(14));
         });
     });
     describe('clone', () => {
         it('should return a copy of the current vector', () => {
             const v = new Vector3(1, 2, 3);
             const v2 = v.clone();
-            expect(v2.x).to.equal(1);
-            expect(v2.y).to.equal(2);
-            expect(v2.z).to.equal(3);
+            expect(v2.x).toBe(1);
+            expect(v2.y).toBe(2);
+            expect(v2.z).toBe(3);
         });
     });
     describe('projectTo2d', () => {
@@ -268,14 +266,14 @@ describe('Vector3', () => {
             const rotation = new Vector3(1, 1, 1);
             const scale = 1;
             const v2 = v.projectTo2d(camera, screen, rotation, scale);
-            expect(v2.x).to.equal(1);
+            expect(v2.x).toBe(1);
         });
     });
     describe('toString', () => {
         it('should return a string representation of the current vector', () => {
             const v = new Vector3(1, 2, 3);
             const str = v.toString();
-            expect(str).to.equal('(1,2,3)');
+            expect(str).toBe('(1,2,3)');
         });
     })
-})
+});
