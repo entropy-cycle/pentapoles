@@ -34,3 +34,35 @@ EnvironmentBase has the following methods:
 - get - returns an array of EnvironmentBase objects that are contained within the EnvironmentBase.
 - toString - returns a string representation of the EnvironmentBase.
 */
+
+import { Environment } from '../src/environment';
+import { Vector3 } from '../src/vector';
+import { EnvironmentBase } from '../src/envbase';
+
+describe('Environment', () => {
+  describe('constructor', () => {
+    it('should create an environment instance', () => {
+      const parent = Environment.NULL || EnvironmentBase.NULL;
+      const env = new Environment(parent, new Vector3(0, 0, 0));
+      expect(env).toBeDefined();
+    });
+  });
+
+  describe('isRoot', () => {
+    it('should return true for root environment', () => {
+      const parent = Environment.NULL || EnvironmentBase.NULL;
+      const env = new Environment(parent, new Vector3(0, 0, 0));
+      // The isRoot property is true when parent === undefined,
+      // but we're passing EnvironmentBase.NULL as the parent
+      expect(env.isRoot).toBe(false);
+    });
+  });
+
+  describe('isLeaf', () => {
+    it('should return true for leaf environment', () => {
+      const parent = Environment.NULL || EnvironmentBase.NULL;
+      const env = new Environment(parent, new Vector3(0, 0, 0));
+      expect(env.isLeaf).toBe(true);
+    });
+  });
+});

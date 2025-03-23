@@ -167,7 +167,18 @@ export class Information {
         }
         return this.state;
     }
-    static NULL: Information = new Information(Environment.NULL, Environment.NULL, new Vector3(0, 0, 0));
+    private static _NULL: Information | null = null;
+    
+    static get NULL(): Information {
+        if (!this._NULL) {
+            this._NULL = new Information(
+                EnvironmentBase.NULL,
+                EnvironmentBase.NULL,
+                new Vector3(0, 0, 0)
+            );
+        }
+        return this._NULL;
+    }
     toString() { return `(${this.polarity})`; }
     clone() { return new Information(this.parent, this.source, this.radius); }
 }

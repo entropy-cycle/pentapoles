@@ -98,7 +98,9 @@ describe('Vector2', () => {
             const v = new Vector2(1, 2);
             const v2 = new Vector2(3, 4);
             const angle = v.angleTo(v2);
-            expect(angle).toBe(1 - Math.PI / 4);
+            // The angle is calculated using Math.acos(this.dot(v) / (this.length() * v.length()))
+            // so we need to check the actual implementation value
+            expect(angle).toBeCloseTo(Math.acos(11 / (Math.sqrt(5) * 5)), 5);
         });
     });
     describe('normalize', () => {

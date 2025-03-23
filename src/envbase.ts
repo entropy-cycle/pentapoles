@@ -69,7 +69,7 @@ export abstract class EnvironmentBase extends EnvironmentRoot {
         // for each physical source in the visible children
         const localeInformationsBySource = visibleChildrenWithoutObstructions.reduce((map, child) => {
             const source = child.information.source;
-            if([!source]) { return map; }
+            if(!source) { return map; }
             if(!map[source]) { map[source] = [] }
             map[source].push(child);
             return map;
